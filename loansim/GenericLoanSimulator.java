@@ -59,8 +59,9 @@ public class GenericLoanSimulator extends LoanSimulator {
         count = 1;
         while (principalOwed > 0) {
             double interestBase;
-            if ((interestType.equalsIgnoreCase("simple") && principalOwed <= origLoanAmount)
-                    || interestType.equalsIgnoreCase("compound")) {
+            boolean simpleInterest = interestType.equalsIgnoreCase("simple");
+            boolean compoundInterest = interestType.equalsIgnoreCase("compound");
+            if ((simpleInterest && principalOwed <= origLoanAmount) || compoundInterest) {
                 interestBase = principalOwed;
             } else {
                 interestBase = origLoanAmount;
