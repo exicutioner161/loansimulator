@@ -70,7 +70,7 @@ public class GenericLoanSimulator extends LoanSimulator {
             totalInterest = roundCurrency(totalInterest + monthlyInterest);
             accruedInterest += monthlyInterest - monthlyPayment;
             if (accruedInterest < 0) {
-                principalOwed = roundCurrency(principalOwed - accruedInterest);
+                principalOwed = roundCurrency(principalOwed + accruedInterest);
             }
             if (principalOwed <= 0) {
                 principalOwed = 0;
@@ -80,7 +80,7 @@ public class GenericLoanSimulator extends LoanSimulator {
             }
             if (count >= MAX_REPAYMENT_TERM_MONTHS) {
                 String message = "WARNING: Unable to repay within repayment term!"
-                        + "%nInterest left to pay: %.2f%nTotal left to pay: %.2f";
+                        + "%nInterest left to pay: %.2f%nTotal left to pay: %.2f%n";
                 System.out.printf(message, accruedInterest, principalOwed + accruedInterest);
                 return;
             }
