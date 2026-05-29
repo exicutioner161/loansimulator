@@ -1,5 +1,6 @@
 package loansim;
 
+import exilib.Utils;
 import java.util.Scanner;
 
 public class StudentLoanSimulator extends LoanSimulator {
@@ -204,17 +205,12 @@ public class StudentLoanSimulator extends LoanSimulator {
 
     @Override
     final void handleInput() {
-        System.out.print("Monthly subsidized payment while in school: ");
-        schoolMonthlySub = input.nextDouble();
-        System.out.print("Monthly unsubsidized payment while in school: ");
-        schoolMonthlyUnsub = input.nextDouble();
-        System.out.print("Monthly subsidized payment after graduation: ");
-        postgradMonthlySub = input.nextDouble();
-        System.out.print("Monthly unsubsidized payment after graduation: ");
-        postgradMonthlyUnsub = input.nextDouble();
+        schoolMonthlySub = Utils.validateUserDoubleInput(input, "Monthly subsidized payment while in school: ");
+        schoolMonthlyUnsub = Utils.validateUserDoubleInput(input, "Monthly unsubsidized payment while in school: ");
+        postgradMonthlySub = Utils.validateUserDoubleInput(input, "Monthly subsidized payment after graduation: ");
+        postgradMonthlyUnsub = Utils.validateUserDoubleInput(input, "Monthly unsubsidized payment after graduation: ");
         input.nextLine();
-        System.out.print("Print monthly stats while running? Y/N: ");
-        response = input.nextLine();
+        response = Utils.validateUserStringInput(input, "Print monthly stats while running? Y/N: ");
         System.out.println();
     }
 
