@@ -9,14 +9,13 @@ import java.util.Scanner;
  * Provides static helper methods to check whether a string represents an
  * integer or double, to test whether a string is non-numeric, and to prompt for
  * validated input using a {@link java.util.Scanner}.
- *
  * <p>
  * This class is not instantiable.
  */
 public final class Utils {
     /** Prevent instantiation of this utility class. */
     private Utils() {
-        /* this utility class should not be instantiated */
+        /* This utility class should not be instantiated */
     }
 
     /**
