@@ -47,7 +47,7 @@ public class GenericLoanSimulator extends LoanSimulator {
         while (true) {
             double rate = Utils.validateUserDoubleInput(input,
                     "Monthly interest rate (enter as a decimal. ex: 1% = 0.01): ");
-            if (rate < 1 && rate >= 0) {
+            if (rate <= 1 && rate >= 0) {
                 return rate;
             }
             System.out.println("Enter a number between 0 and 1.");
