@@ -25,7 +25,7 @@ public class Utils {
         }
     }
 
-    public static boolean isNotNum(String in) { return !isInt(in) && !isDouble(in); }
+    public static boolean isNotNum(String in) { return !in.isEmpty() && !isInt(in) && !isDouble(in); }
 
     public static double validateUserDoubleInput(Scanner input, String inputMessage) {
         String in;
@@ -36,7 +36,7 @@ public class Utils {
         return Double.parseDouble(in);
     }
 
-    public static double validateUserIntInput(Scanner input, String inputMessage) {
+    public static int validateUserIntInput(Scanner input, String inputMessage) {
         String in;
         do {
             System.out.print(inputMessage);
