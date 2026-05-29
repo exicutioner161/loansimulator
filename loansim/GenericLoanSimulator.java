@@ -56,11 +56,11 @@ public class GenericLoanSimulator extends LoanSimulator {
 
     private double handleMonthlyPaymentInput() {
         double payment = Utils.validateUserDoubleInput(input, "Monthly payment: ");
-        if (payment <= roundCurrency(origLoanAmount * interestRate)) {
+        if (payment <= origLoanAmount * interestRate) {
             System.out.println("WARNING: Monthly payment is less than the monthly interest " + "($"
-                    + roundCurrency(origLoanAmount * interestRate) + ").");
+                    + origLoanAmount * interestRate + ").");
         }
-        return payment;
+        return roundCurrency(payment);
     }
 
     @Override
