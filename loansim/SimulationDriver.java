@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 public class SimulationDriver {
     private SimulationDriver() {
-        /* this class should not be instantiated */
+        /* This class should not be instantiated */
     }
 
     private static int chooseLoanType(Scanner input) {
