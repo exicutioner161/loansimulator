@@ -25,11 +25,13 @@ public class Utils {
         }
     }
 
+    public static boolean isNotNum(String in) { return !isInt(in) && !isDouble(in); }
+
     public static double validateUserDoubleInput(Scanner input, String inputMessage) {
         String in;
         do {
             System.out.print(inputMessage);
-            in = input.nextLine();
+            in = input.nextLine().trim();
         } while (!isDouble(in));
         return Double.parseDouble(in);
     }
@@ -38,8 +40,17 @@ public class Utils {
         String in;
         do {
             System.out.print(inputMessage);
-            in = input.nextLine();
+            in = input.nextLine().trim();
         } while (!isInt(in));
         return Integer.parseInt(in);
+    }
+
+    public static String validateUserStringInput(Scanner input, String inputMessage) {
+        String in;
+        do {
+            System.out.print(inputMessage);
+            in = input.nextLine().trim();
+        } while (!isNotNum(in));
+        return in;
     }
 }
