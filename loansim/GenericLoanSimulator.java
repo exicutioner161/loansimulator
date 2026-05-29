@@ -51,7 +51,6 @@ public class GenericLoanSimulator extends LoanSimulator {
             System.out.println("Please enter simple or compound:");
             interestType = input.nextLine().trim();
         }
-        runSimulation();
     }
 
     @Override
