@@ -2,7 +2,7 @@ package exilib;
 
 import java.util.Scanner;
 
-public class Utils {
+public final class Utils {
     private Utils() {
         /* this utility class should not be instantiated */
     }
