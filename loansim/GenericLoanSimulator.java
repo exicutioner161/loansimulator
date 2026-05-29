@@ -23,7 +23,6 @@ public class GenericLoanSimulator extends LoanSimulator {
 
     @Override
     final void resetState() {
-        count = 0;
         principalOwed = 0;
         accruedInterest = 0;
         interestRate = 0;
@@ -53,14 +52,16 @@ public class GenericLoanSimulator extends LoanSimulator {
         }
     }
 
-    @Override
-    final void runSimulation() {
+    private void printSimulationStats() {
+        String message = "It will take %d months or %.2f years to repay the loan. Total interest paid: $%.2f%n";
+        System.out.printf(message, count, toYears(count), totalInterest);
+    }
+
+    private void simulateSimple() {
         count = 1;
         while (principalOwed > 0) {
             double interestBase;
-            boolean simpleInterest = interestType.equalsIgnoreCase("simple");
-            boolean compoundInterest = interestType.equalsIgnoreCase("compound");
-            if ((simpleInterest && principalOwed <= origLoanAmount) || compoundInterest) {
+            if (principalOwed <= origLoanAmount) {
                 interestBase = principalOwed;
             } else {
                 interestBase = origLoanAmount;
@@ -72,9 +73,7 @@ public class GenericLoanSimulator extends LoanSimulator {
                 principalOwed = roundCurrency(principalOwed + accruedInterest);
             }
             if (principalOwed <= 0) {
-                principalOwed = 0;
-                String message = "It will take %d months or %.2f years to repay the loan. Total interest paid: $%.2f%n";
-                System.out.printf(message, count, toYears(count), totalInterest);
+                printSimulationStats();
                 return;
             }
             if (count >= MAX_REPAYMENT_TERM_MONTHS) {
@@ -84,6 +83,41 @@ public class GenericLoanSimulator extends LoanSimulator {
                 return;
             }
             count++;
+        }
+    }
+
+    private void simulateCompound() {
+        count = 1;
+        double amountOwed = origLoanAmount;
+        while (amountOwed > 0) {
+            double interestBase = amountOwed;
+            monthlyInterest = roundCurrency(interestRate * interestBase);
+            totalInterest = roundCurrency(totalInterest + monthlyInterest);
+            amountOwed = roundCurrency(amountOwed + monthlyInterest - monthlyPayment);
+            if (amountOwed <= 0) {
+                printSimulationStats();
+                return;
+            }
+            if (count >= MAX_REPAYMENT_TERM_MONTHS) {
+                String message = "WARNING: Unable to repay within repayment term!"
+                        + "%nInterest left to pay: %.2f%nTotal left to pay: %.2f%n";
+                System.out.printf(message, accruedInterest, amountOwed + accruedInterest);
+                return;
+            }
+            count++;
+        }
+    }
+
+    @Override
+    final void runSimulation() {
+        boolean simpleInterest = interestType.equalsIgnoreCase("simple");
+        boolean compoundInterest = interestType.equalsIgnoreCase("compound");
+        if (simpleInterest) {
+            simulateSimple();
+        } else if (compoundInterest) {
+            simulateCompound();
+        } else {
+            throw new IllegalStateException("Both simpleInterest and compoundInterest are false!");
         }
     }
 
