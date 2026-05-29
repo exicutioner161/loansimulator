@@ -69,7 +69,7 @@ public class GenericLoanSimulator extends LoanSimulator {
             if (!interestType.equalsIgnoreCase("simple") && !interestType.equalsIgnoreCase("compound")) {
                 return type;
             }
-            System.out.println("Please enter simple or compound:");
+            System.out.println("Please enter 'simple' or 'compound':");
         }
     }
 
