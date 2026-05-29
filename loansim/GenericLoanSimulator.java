@@ -35,11 +35,22 @@ public class GenericLoanSimulator extends LoanSimulator {
 
     private double handleLoanInput() {
         while (true) {
-            double in = Utils.validateUserDoubleInput(input, "Loan amount: ");
-            if (in > 0) {
-                return in;
+            double loan = Utils.validateUserDoubleInput(input, "Loan amount: ");
+            if (loan > 0) {
+                return loan;
             }
             System.out.println("Enter a number above zero!");
+        }
+    }
+
+    private double handleInterestRateInput() {
+        while (true) {
+            double rate = Utils.validateUserDoubleInput(input,
+                    "Monthly interest rate (enter as a decimal. ex: 1% = 0.01): ");
+            if (rate < 1 && rate >= 0) {
+                return rate;
+            }
+            System.out.println("Enter a number between 0 and 1.");
         }
     }
 
@@ -47,14 +58,7 @@ public class GenericLoanSimulator extends LoanSimulator {
     final void handleInput() {
         origLoanAmount = handleLoanInput();
         principalOwed = origLoanAmount;
-        while (true) {
-            interestRate = Utils.validateUserDoubleInput(input,
-                    "Monthly interest rate (enter as a decimal. ex: 1% = 0.01): ");
-            if (interestRate < 1 && interestRate >= 0) {
-                break;
-            }
-            System.out.println("Enter a number between 0 and 1.");
-        }
+        interestRate = handleInterestRateInput();
         monthlyPayment = Utils.validateUserDoubleInput(input, "Monthly payment: ");
         if (monthlyPayment <= roundCurrency(origLoanAmount * interestRate)) {
             System.out.println("WARNING: Monthly payment is less than the monthly interest " + "($"
