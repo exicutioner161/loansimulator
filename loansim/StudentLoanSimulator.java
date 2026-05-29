@@ -40,15 +40,19 @@ public class StudentLoanSimulator extends LoanSimulator {
         this.input = input;
     }
 
+    private void accrueInterestIfPostgrad() {
+        if (countSub > MONTHS_IN_UNI) {
+            dailySubInterest = dailyInterestRate * principalSubOwed;
+            double accruedSubInterest = roundCurrency(dailySubInterest * AVG_DAYS_IN_MONTH);
+            monthlySubInterest = roundCurrency(monthlySubInterest + accruedSubInterest);
+            totalSubInterest = roundCurrency(totalSubInterest + accruedSubInterest);
+        }
+    }
+
     private void simulateSubsidized(double schoolMonthly, double postgradMonthly) {
         countSub = 1;
         while (principalSubOwed > 0) {
-            if (countSub > MONTHS_IN_UNI) {
-                dailySubInterest = dailyInterestRate * principalSubOwed;
-                double accruedSubInterest = roundCurrency(dailySubInterest * AVG_DAYS_IN_MONTH);
-                monthlySubInterest = roundCurrency(monthlySubInterest + accruedSubInterest);
-                totalSubInterest = roundCurrency(totalSubInterest + accruedSubInterest);
-            }
+            accrueInterestIfPostgrad();
             double totalSub = principalSubOwed + monthlySubInterest;
             if (countSub <= MONTHS_IN_UNI) {
                 printMonthlySub(countSub, schoolMonthly, totalSub);
@@ -113,12 +117,7 @@ public class StudentLoanSimulator extends LoanSimulator {
     private void simulateSubsidizedFast(double schoolMonthly, double postgradMonthly) {
         countSub = 1;
         while (principalSubOwed > 0) {
-            if (countSub > MONTHS_IN_UNI) {
-                dailySubInterest = dailyInterestRate * principalSubOwed;
-                double accruedSubInterest = roundCurrency(dailySubInterest * AVG_DAYS_IN_MONTH);
-                monthlySubInterest = roundCurrency(monthlySubInterest + accruedSubInterest);
-                totalSubInterest = roundCurrency(totalSubInterest + accruedSubInterest);
-            }
+            accrueInterestIfPostgrad();
             if (countSub <= MONTHS_IN_UNI) {
                 monthlySubInterest -= schoolMonthly;
             } else {
