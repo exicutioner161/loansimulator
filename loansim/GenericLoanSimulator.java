@@ -37,10 +37,10 @@ public class GenericLoanSimulator extends LoanSimulator {
     final void handleInput() {
         while (true) {
             origLoanAmount = Utils.validateUserDoubleInput(input, "Loan amount: ");
-            if (origLoanAmount >= 0) {
+            if (origLoanAmount > 0) {
                 break;
             }
-            System.out.println("Enter a non-negative number!");
+            System.out.println("Enter a number above zero!");
         }
         principalOwed = origLoanAmount;
         while (true) {
