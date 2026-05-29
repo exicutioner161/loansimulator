@@ -54,16 +54,21 @@ public class GenericLoanSimulator extends LoanSimulator {
         }
     }
 
+    private double handleMonthlyPaymentInput() {
+        double payment = Utils.validateUserDoubleInput(input, "Monthly payment: ");
+        if (payment <= roundCurrency(origLoanAmount * interestRate)) {
+            System.out.println("WARNING: Monthly payment is less than the monthly interest " + "($"
+                    + roundCurrency(origLoanAmount * interestRate) + ").");
+        }
+        return payment;
+    }
+
     @Override
     final void handleInput() {
         origLoanAmount = handleLoanInput();
         principalOwed = origLoanAmount;
         interestRate = handleInterestRateInput();
-        monthlyPayment = Utils.validateUserDoubleInput(input, "Monthly payment: ");
-        if (monthlyPayment <= roundCurrency(origLoanAmount * interestRate)) {
-            System.out.println("WARNING: Monthly payment is less than the monthly interest " + "($"
-                    + roundCurrency(origLoanAmount * interestRate) + ").");
-        }
+        monthlyPayment = handleMonthlyPaymentInput();
         System.out.print("\nEnter the interest type (simple or compound): ");
         interestType = input.nextLine().trim();
         while (!interestType.equalsIgnoreCase("simple") && !interestType.equalsIgnoreCase("compound")) {
