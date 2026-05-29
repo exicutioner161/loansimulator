@@ -63,17 +63,22 @@ public class GenericLoanSimulator extends LoanSimulator {
         return roundCurrency(payment);
     }
 
+    private String handleInterestTypeInput() {
+        String type = Utils.validateUserStringInput(input, "Enter the interest type (simple or compound): ");
+        while (!interestType.equalsIgnoreCase("simple") && !interestType.equalsIgnoreCase("compound")) {
+            System.out.println("Please enter simple or compound:");
+            type = Utils.validateUserStringInput(input, "Enter the interest type (simple or compound): ");
+        }
+        return type;
+    }
+
     @Override
     final void handleInput() {
         origLoanAmount = handleLoanInput();
         principalOwed = origLoanAmount;
         interestRate = handleInterestRateInput();
         monthlyPayment = handleMonthlyPaymentInput();
-        interestType = Utils.validateUserStringInput(input, "Enter the interest type (simple or compound): ");
-        while (!interestType.equalsIgnoreCase("simple") && !interestType.equalsIgnoreCase("compound")) {
-            System.out.println("Please enter simple or compound:");
-            interestType = Utils.validateUserStringInput(input, "Enter the interest type (simple or compound): ");
-        }
+        interestType = handleInterestTypeInput();
     }
 
     private void printSimulationStats() {
