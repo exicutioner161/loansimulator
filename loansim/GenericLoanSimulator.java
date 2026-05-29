@@ -64,12 +64,13 @@ public class GenericLoanSimulator extends LoanSimulator {
     }
 
     private String handleInterestTypeInput() {
-        String type = Utils.validateUserStringInput(input, "Enter the interest type (simple or compound): ");
-        while (!interestType.equalsIgnoreCase("simple") && !interestType.equalsIgnoreCase("compound")) {
+        while (true) {
+            String type = Utils.validateUserStringInput(input, "Enter the interest type (simple or compound): ");
+            if (!interestType.equalsIgnoreCase("simple") && !interestType.equalsIgnoreCase("compound")) {
+                return type;
+            }
             System.out.println("Please enter simple or compound:");
-            type = Utils.validateUserStringInput(input, "Enter the interest type (simple or compound): ");
         }
-        return type;
     }
 
     @Override
