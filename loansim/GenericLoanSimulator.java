@@ -1,0 +1,92 @@
+package loansim;
+
+import exilib.Utils;
+import java.util.Scanner;
+
+public class GenericLoanSimulator extends LoanSimulator {
+    private static final double MAX_REPAYMENT_TERM_MONTHS = 600.0;
+    private int count;
+    private double principalOwed;
+    private double accruedInterest;
+    private double interestRate;
+    private double monthlyPayment;
+    private double monthlyInterest;
+    private double totalInterest;
+    private String interestType;
+    private double origLoanAmount;
+    private final Scanner input;
+
+    public GenericLoanSimulator(Scanner input) {
+        resetState();
+        this.input = input;
+    }
+
+    @Override
+    final void resetState() {
+        count = 0;
+        principalOwed = 0;
+        accruedInterest = 0;
+        interestRate = 0;
+        monthlyPayment = 0;
+        monthlyInterest = 0;
+        totalInterest = 0;
+        interestType = "";
+        origLoanAmount = 0;
+    }
+
+    @Override
+    final void handleInput() {
+        origLoanAmount = Utils.validateUserDoubleInput(input, "Loan amount: ");
+        principalOwed = origLoanAmount;
+        interestRate = Utils.validateUserDoubleInput(input,
+                "Monthly interest rate (enter as a decimal. ex: 1% = 0.01): ");
+        monthlyPayment = Utils.validateUserDoubleInput(input, "Monthly payment: ");
+        if (monthlyPayment <= roundCurrency(origLoanAmount * interestRate)) {
+            System.out.println("WARNING: Monthly payment is less than the monthly interest " + "($"
+                    + roundCurrency(origLoanAmount * interestRate) + ").");
+        }
+        System.out.print("\nEnter the interest type (simple or compound): ");
+        interestType = input.nextLine().trim();
+        while (!interestType.equalsIgnoreCase("simple") && !interestType.equalsIgnoreCase("compound")) {
+            System.out.println("Please enter simple or compound:");
+            interestType = input.nextLine().trim();
+        }
+        runSimulation();
+    }
+
+    @Override
+    final void runSimulation() {
+        count = 1;
+        while (principalOwed > 0) {
+            double interestBase;
+            if ((interestType.equalsIgnoreCase("simple") && principalOwed <= origLoanAmount)
+                    || interestType.equalsIgnoreCase("compound")) {
+                interestBase = principalOwed;
+            } else {
+                interestBase = origLoanAmount;
+            }
+            monthlyInterest = roundCurrency(interestRate * interestBase);
+            totalInterest = roundCurrency(totalInterest + monthlyInterest);
+            accruedInterest += monthlyInterest - monthlyPayment;
+            principalOwed = roundCurrency(principalOwed + monthlyInterest - monthlyPayment);
+            if (principalOwed <= 0) {
+                principalOwed = 0;
+                System.out.printf(
+                        "It will take %d months or %.2f years to repay the loan. Total interest paid: $%.2f%n", count,
+                        toYears(count), totalInterest);
+                return;
+            }
+            if (count >= MAX_REPAYMENT_TERM_MONTHS) {
+                System.out.println("WARNING: Unable to repay within repayment term!");
+                return;
+            }
+            count++;
+        }
+    }
+
+    @Override
+    public final double getTotalInterest() { return totalInterest; }
+
+    @Override
+    public final double getOriginalLoanAmount() { return origLoanAmount; }
+}
