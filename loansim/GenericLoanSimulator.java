@@ -107,7 +107,7 @@ public class GenericLoanSimulator extends LoanSimulator {
                 return;
             }
             if (count >= MAX_REPAYMENT_TERM_MONTHS) {
-                String message = "WARNING: Unable to repay within repayment term!"
+                String message = "Unable to repay within repayment term!"
                         + "%nInterest left to pay: %.2f%nTotal left to pay: %.2f%n";
                 System.out.printf(message, accruedInterest, principalOwed + accruedInterest);
                 return;
@@ -129,7 +129,7 @@ public class GenericLoanSimulator extends LoanSimulator {
                 return;
             }
             if (count >= MAX_REPAYMENT_TERM_MONTHS) {
-                String message = "WARNING: Unable to repay within repayment term!"
+                String message = "Unable to repay within repayment term!"
                         + "%nInterest left to pay: %.2f%nTotal left to pay: %.2f%n";
                 System.out.printf(message, accruedInterest, amountOwed + accruedInterest);
                 return;
