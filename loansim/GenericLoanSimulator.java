@@ -33,15 +33,19 @@ public class GenericLoanSimulator extends LoanSimulator {
         origLoanAmount = 0;
     }
 
-    @Override
-    final void handleInput() {
+    private double handleLoanInput() {
         while (true) {
-            origLoanAmount = Utils.validateUserDoubleInput(input, "Loan amount: ");
-            if (origLoanAmount > 0) {
-                break;
+            double in = Utils.validateUserDoubleInput(input, "Loan amount: ");
+            if (in > 0) {
+                return in;
             }
             System.out.println("Enter a number above zero!");
         }
+    }
+
+    @Override
+    final void handleInput() {
+        origLoanAmount = handleLoanInput();
         principalOwed = origLoanAmount;
         while (true) {
             interestRate = Utils.validateUserDoubleInput(input,
