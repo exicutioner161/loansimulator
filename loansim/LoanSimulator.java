@@ -7,7 +7,7 @@ public abstract class LoanSimulator {
 
     abstract void runSimulation();
 
-    public abstract double getTotalInterest();
+    public abstract double getTotalInterestPaid();
 
     public abstract double getOriginalLoanAmount();
 

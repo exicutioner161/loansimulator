@@ -45,7 +45,7 @@ public class SimulationDriver {
                 throw new IllegalStateException("LoanSimulatorFactory returned null for loanType: " + loanType);
             }
             sim.run();
-            interestList.add(sim.getTotalInterest());
+            interestList.add(sim.getTotalInterestPaid());
             amountList.add(sim.getOriginalLoanAmount());
         } while (continueRunning(input));
     }

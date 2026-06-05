@@ -31,6 +31,7 @@ public class StudentLoanSimulator extends LoanSimulator {
     private double totalSubBalance;
     private double totalUnsubBalance;
     private double totalInterest;
+    private double totalInterestPaid;
     private int count;
     private double schoolMonthlyPayment;
     private double postgradMonthlyPayment;
@@ -72,6 +73,8 @@ public class StudentLoanSimulator extends LoanSimulator {
             double subProportion = totalSubBalance / (totalUnsubBalance + totalSubBalance);
             double unsubProportion = totalUnsubBalance / (totalUnsubBalance + totalSubBalance);
             double payment = count <= MONTHS_IN_UNI ? schoolMonthlyPayment : postgradMonthlyPayment;
+            if (payment > totalUnsubBalance + totalSubBalance) {
+            }
             if (principalTotalOwed <= 0) {
                 return;
             }
@@ -100,7 +103,7 @@ public class StudentLoanSimulator extends LoanSimulator {
         monthlySubInterest = 0.0;
         totalUnsubInterest = 0.0;
         totalSubInterest = 0.0;
-        totalInterest = 0.0;
+        totalInterestPaid = 0.0;
     }
 
     @Override
@@ -112,15 +115,15 @@ public class StudentLoanSimulator extends LoanSimulator {
 
     @Override
     final void runSimulation() {
-        totalInterest = roundCurrency(totalSubInterest + totalUnsubInterest);
+        totalInterestPaid = roundCurrency(totalSubInterest + totalUnsubInterest);
         String message = "Time elapsed: %d months or %.2f years to pay off your $%.2f loan. "
                 + "%nTotal interest paid: $%.2f%n";
         System.out.printf(message, count, toYears(count), origLoanAmount, count, toYears(count), totalUnsubInterest,
-                totalInterest);
+                totalInterestPaid);
     }
 
     @Override
-    public final double getTotalInterest() { return totalInterest; }
+    public final double getTotalInterestPaid() { return totalInterestPaid; }
 
     @Override
     public final double getOriginalLoanAmount() { return origLoanAmount; }

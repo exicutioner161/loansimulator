@@ -11,7 +11,7 @@ public class GenericLoanSimulator extends LoanSimulator {
     private double interestRate;
     private double monthlyPayment;
     private double monthlyInterest;
-    private double totalInterest;
+    private double totalInterestPaid;
     private String interestType;
     private double origLoanAmount;
     private final Scanner input;
@@ -28,7 +28,7 @@ public class GenericLoanSimulator extends LoanSimulator {
         interestRate = 0;
         monthlyPayment = 0;
         monthlyInterest = 0;
-        totalInterest = 0;
+        totalInterestPaid = 0;
         interestType = "";
         origLoanAmount = 0;
     }
@@ -80,7 +80,7 @@ public class GenericLoanSimulator extends LoanSimulator {
 
     private void printSimulationStats() {
         String message = "It will take %d months or %.2f years to repay the loan. Total interest paid: $%.2f%n";
-        System.out.printf(message, count, toYears(count), totalInterest);
+        System.out.printf(message, count, toYears(count), totalInterestPaid);
     }
 
     private void simulateSimple() {
@@ -93,7 +93,7 @@ public class GenericLoanSimulator extends LoanSimulator {
                 interestBase = origLoanAmount;
             }
             monthlyInterest = roundCurrency(interestRate * interestBase);
-            totalInterest = roundCurrency(totalInterest + monthlyInterest);
+            totalInterestPaid = roundCurrency(totalInterestPaid + monthlyInterest);
             accruedInterest += monthlyInterest - monthlyPayment;
             if (accruedInterest < 0) {
                 principalOwed = roundCurrency(principalOwed + accruedInterest);
@@ -118,7 +118,7 @@ public class GenericLoanSimulator extends LoanSimulator {
         while (amountOwed > 0) {
             double interestBase = amountOwed;
             monthlyInterest = roundCurrency(interestRate * interestBase);
-            totalInterest = roundCurrency(totalInterest + monthlyInterest);
+            totalInterestPaid = roundCurrency(totalInterestPaid + monthlyInterest);
             amountOwed = roundCurrency(amountOwed + monthlyInterest - monthlyPayment);
             if (amountOwed <= 0) {
                 printSimulationStats();
@@ -148,7 +148,7 @@ public class GenericLoanSimulator extends LoanSimulator {
     }
 
     @Override
-    public final double getTotalInterest() { return totalInterest; }
+    public final double getTotalInterestPaid() { return totalInterestPaid; }
 
     @Override
     public final double getOriginalLoanAmount() { return origLoanAmount; }
