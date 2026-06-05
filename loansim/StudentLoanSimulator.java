@@ -11,39 +11,37 @@ public class StudentLoanSimulator extends LoanSimulator {
     private static final double YEARS_IN_UNI = 4.0;
     private static final double AVG_DAYS_IN_MONTH = 30.436875;
     private static final double MAX_REPAYMENT_TERM_MONTHS = 360.0;
-    private double annualInterestRate = 0.06283;
-    private double dailyInterestRate = annualInterestRate / 365.0;
-    private double semesterUnsubOrig = 2000;
-    private double unsubsidizedOrig = semesterUnsubOrig * YEARS_IN_UNI;
-    private double semesterSubOrig = 3500;
-    private double subsidizedOrig = semesterSubOrig * YEARS_IN_UNI;
-    private double origLoanAmount = unsubsidizedOrig + subsidizedOrig;
+    private final Scanner input;
+    private double annualInterestRate;
+    private double dailyInterestRate;
+    private double semesterUnsubOrig;
+    private double unsubsidizedOrig;
+    private double semesterSubOrig;
+    private double subsidizedOrig;
+    private double origLoanAmount;
     private double principalUnsubOwed;
     private double principalSubOwed;
+    private double principalTotalOwed;
     private double dailyUnsubInterest;
     private double dailySubInterest;
     private double monthlyUnsubInterest;
     private double monthlySubInterest;
     private double totalUnsubInterest;
     private double totalSubInterest;
+    private double totalSubBalance;
+    private double totalUnsubBalance;
     private double totalInterest;
-    private int countSub;
-    private int countUnsub;
-    private double schoolMonthlyUnsub;
-    private double schoolMonthlySub;
-    private double postgradMonthlyUnsub;
-    private double postgradMonthlySub;
-    private boolean unsubFullyPaid;
-    private boolean subFullyPaid;
-    private final Scanner input;
+    private int count;
+    private double schoolMonthlyPayment;
+    private double postgradMonthlyPayment;
 
     public StudentLoanSimulator(Scanner input) {
         resetState();
         this.input = input;
     }
 
-    private void accrueInterestIfPostgrad() {
-        if (countSub > MONTHS_IN_UNI) {
+    private void accrueSubPostgradInterest() {
+        if (count > MONTHS_IN_UNI) {
             dailySubInterest = dailyInterestRate * principalSubOwed;
             double accruedSubInterest = roundCurrency(dailySubInterest * AVG_DAYS_IN_MONTH);
             monthlySubInterest = roundCurrency(monthlySubInterest + accruedSubInterest);
@@ -51,102 +49,74 @@ public class StudentLoanSimulator extends LoanSimulator {
         }
     }
 
-    private void simulateSubsidized(double schoolMonthly, double postgradMonthly) {
-        countSub = 1;
-        while (principalSubOwed > 0) {
-            accrueInterestIfPostgrad();
-            if (countSub <= MONTHS_IN_UNI) {
-                monthlySubInterest -= schoolMonthly;
-            } else {
-                monthlySubInterest -= postgradMonthly;
-            }
-            if (monthlySubInterest < 0) {
-                principalSubOwed += monthlySubInterest;
-                monthlySubInterest = 0;
-            }
-            if (principalSubOwed <= 0) {
-                subFullyPaid = true;
-                return;
-            }
-            if (countSub >= MAX_REPAYMENT_TERM_MONTHS) {
-                System.out.println("WARNING: Unable to repay within repayment term!");
-                subFullyPaid = false;
-                return;
-            }
-            countSub++;
-        }
+    private void accrueUnsubInterest() {
+        dailyUnsubInterest = dailyInterestRate * principalUnsubOwed;
+        double accruedUnsubInterest = roundCurrency(dailyUnsubInterest * AVG_DAYS_IN_MONTH);
+        monthlyUnsubInterest = roundCurrency(monthlyUnsubInterest + accruedUnsubInterest);
+        totalUnsubInterest = roundCurrency(totalUnsubInterest + accruedUnsubInterest);
     }
 
-    private void simulateUnsubsidized(double schoolMonthly, double postgradMonthly) {
-        countUnsub = 1;
-        while (principalUnsubOwed > 0) {
-            dailyUnsubInterest = dailyInterestRate * principalUnsubOwed;
-            double accruedUnsubInterest = roundCurrency(dailyUnsubInterest * AVG_DAYS_IN_MONTH);
-            monthlyUnsubInterest = roundCurrency(monthlyUnsubInterest + accruedUnsubInterest);
-            totalUnsubInterest = roundCurrency(totalUnsubInterest + accruedUnsubInterest);
-            if (countUnsub <= MONTHS_IN_UNI) {
-                monthlyUnsubInterest -= schoolMonthly;
-            } else {
-                monthlyUnsubInterest -= postgradMonthly;
-            }
-            if (monthlyUnsubInterest < 0) {
-                principalUnsubOwed += monthlyUnsubInterest;
-                monthlyUnsubInterest = 0;
-            }
-            if (principalUnsubOwed <= 0) {
-                unsubFullyPaid = true;
+    private void accrueInterest() {
+        accrueSubPostgradInterest();
+        accrueUnsubInterest();
+        principalSubOwed = roundCurrency(principalSubOwed + dailySubInterest * AVG_DAYS_IN_MONTH);
+        principalUnsubOwed = roundCurrency(principalUnsubOwed + dailyUnsubInterest * AVG_DAYS_IN_MONTH);
+        principalTotalOwed = roundCurrency(principalSubOwed + principalUnsubOwed);
+        totalSubBalance = roundCurrency(principalSubOwed + totalSubInterest);
+        totalUnsubBalance = roundCurrency(principalUnsubOwed + totalUnsubInterest);
+    }
+
+    private void simulate() {
+        while (principalTotalOwed > 0) {
+            accrueInterest();
+            double subProportion = totalSubBalance / (totalUnsubBalance + totalSubBalance);
+            double unsubProportion = totalUnsubBalance / (totalUnsubBalance + totalSubBalance);
+            double payment = count <= MONTHS_IN_UNI ? schoolMonthlyPayment : postgradMonthlyPayment;
+            if (principalTotalOwed <= 0) {
                 return;
             }
-            if (countUnsub >= MAX_REPAYMENT_TERM_MONTHS) {
-                System.out.println("WARNING: Unable to repay within repayment term!");
-                unsubFullyPaid = false;
+            if (count >= MAX_REPAYMENT_TERM_MONTHS) {
+                System.out.println("Unable to repay within repayment term!");
                 return;
             }
-            countUnsub++;
+            count++;
         }
     }
 
     @Override
     final void resetState() {
-        annualInterestRate = 0.06283;
+        annualInterestRate = 0.0;
         dailyInterestRate = annualInterestRate / 365.0;
-        semesterUnsubOrig = 2000;
+        semesterUnsubOrig = 0.0;
         unsubsidizedOrig = semesterUnsubOrig * YEARS_IN_UNI;
-        semesterSubOrig = 3500;
+        semesterSubOrig = 0.0;
         subsidizedOrig = semesterSubOrig * YEARS_IN_UNI;
         principalUnsubOwed = unsubsidizedOrig;
         principalSubOwed = subsidizedOrig;
         origLoanAmount = unsubsidizedOrig + subsidizedOrig;
-        dailyUnsubInterest = 0;
-        dailySubInterest = 0;
-        monthlyUnsubInterest = 0;
-        monthlySubInterest = 0;
-        totalUnsubInterest = 0;
-        totalSubInterest = 0;
-        totalInterest = 0;
-        unsubFullyPaid = false;
-        subFullyPaid = false;
+        dailyUnsubInterest = 0.0;
+        dailySubInterest = 0.0;
+        monthlyUnsubInterest = 0.0;
+        monthlySubInterest = 0.0;
+        totalUnsubInterest = 0.0;
+        totalSubInterest = 0.0;
+        totalInterest = 0.0;
     }
 
     @Override
     final void handleInput() {
-        schoolMonthlySub = Utils.validateUserDoubleInput(input, "Monthly subsidized payment while in school: ");
-        schoolMonthlyUnsub = Utils.validateUserDoubleInput(input, "Monthly unsubsidized payment while in school: ");
-        postgradMonthlySub = Utils.validateUserDoubleInput(input, "Monthly subsidized payment after graduation: ");
-        postgradMonthlyUnsub = Utils.validateUserDoubleInput(input, "Monthly unsubsidized payment after graduation: ");
+        schoolMonthlyPayment = Utils.validateUserDoubleInput(input, "Monthly subsidized payment while in school: ");
+        postgradMonthlyPayment = Utils.validateUserDoubleInput(input,
+                "Monthly unsubsidized payment after graduation: ");
     }
 
     @Override
     final void runSimulation() {
-        simulateSubsidized(schoolMonthlySub, postgradMonthlySub);
-        simulateUnsubsidized(schoolMonthlyUnsub, postgradMonthlyUnsub);
         totalInterest = roundCurrency(totalSubInterest + totalUnsubInterest);
-        String message = "Time elapsed: %d months or %.2f years for the subsidized loan. "
-                + "Fully paid: %b. Subsidized interest paid: $%.2f%n"
-                + "Time elapsed: %d months or %.2f years for the unsubsidized loan. "
-                + "Fully paid: %b. Unsubsidized interest paid: $%.2f%nTotal interest paid: $%.2f%n";
-        System.out.printf(message, countSub, toYears(countSub), subFullyPaid, totalSubInterest, countUnsub,
-                toYears(countUnsub), unsubFullyPaid, totalUnsubInterest, totalInterest);
+        String message = "Time elapsed: %d months or %.2f years to pay off your $%.2f loan. "
+                + "%nTotal interest paid: $%.2f%n";
+        System.out.printf(message, count, toYears(count), origLoanAmount, count, toYears(count), totalUnsubInterest,
+                totalInterest);
     }
 
     @Override
