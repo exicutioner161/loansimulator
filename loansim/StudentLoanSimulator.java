@@ -4,6 +4,9 @@ import exilib.Utils;
 import java.util.Scanner;
 
 public class StudentLoanSimulator extends LoanSimulator {
+    // TODO: STARTED JUNE 5 2026 - COMPLETE REFACTOR
+    // TO CORRECTLY SIMULATE REAL-WORLD LOAN REPAYMENT
+    // AND TAKE CUSTOM LOAN AMOUNTS AND INTEREST RATES
     private static final double MONTHS_IN_UNI = 48.0;
     private static final double YEARS_IN_UNI = 4.0;
     private static final double AVG_DAYS_IN_MONTH = 30.436875;
@@ -105,7 +108,6 @@ public class StudentLoanSimulator extends LoanSimulator {
 
     @Override
     final void resetState() {
-        origLoanAmount = unsubsidizedOrig + subsidizedOrig;
         annualInterestRate = 0.06283;
         dailyInterestRate = annualInterestRate / 365.0;
         semesterUnsubOrig = 2000;
@@ -114,6 +116,7 @@ public class StudentLoanSimulator extends LoanSimulator {
         subsidizedOrig = semesterSubOrig * YEARS_IN_UNI;
         principalUnsubOwed = unsubsidizedOrig;
         principalSubOwed = subsidizedOrig;
+        origLoanAmount = unsubsidizedOrig + subsidizedOrig;
         dailyUnsubInterest = 0;
         dailySubInterest = 0;
         monthlyUnsubInterest = 0;
