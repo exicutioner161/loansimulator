@@ -30,6 +30,7 @@ public class StudentLoanSimulator extends LoanSimulator {
     private double totalSubInterest;
     private double totalSubBalance;
     private double totalUnsubBalance;
+    private double totalBalance;
     private double totalInterest;
     private double totalInterestPaid;
     private int count;
@@ -65,13 +66,14 @@ public class StudentLoanSimulator extends LoanSimulator {
         principalTotalOwed = roundCurrency(principalSubOwed + principalUnsubOwed);
         totalSubBalance = roundCurrency(principalSubOwed + totalSubInterest);
         totalUnsubBalance = roundCurrency(principalUnsubOwed + totalUnsubInterest);
+        totalBalance = roundCurrency(totalSubBalance + totalUnsubBalance);
     }
 
     private void simulate() {
         while (principalTotalOwed > 0) {
             accrueInterest();
-            double subProportion = totalSubBalance / (totalUnsubBalance + totalSubBalance);
-            double unsubProportion = totalUnsubBalance / (totalUnsubBalance + totalSubBalance);
+            double subProportion = totalSubBalance / totalBalance;
+            double unsubProportion = totalUnsubBalance / totalBalance;
             double payment = count <= MONTHS_IN_UNI ? schoolMonthlyPayment : postgradMonthlyPayment;
             if (payment > totalUnsubBalance + totalSubBalance) {
             }
