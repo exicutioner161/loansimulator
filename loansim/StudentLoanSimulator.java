@@ -75,10 +75,10 @@ public class StudentLoanSimulator extends LoanSimulator {
             double subProportion = totalSubBalance / totalOwed;
             double unsubProportion = totalUnsubBalance / totalOwed;
             double payment = count <= MONTHS_IN_UNI ? schoolMonthlyPayment : postgradMonthlyPayment;
-            double amountTowardsPrincipal = 0.0;
+            double amountTowardsPrincipal = 0;
             if (payment > totalInterest) {
                 amountTowardsPrincipal = roundCurrency(payment - totalInterest);
-                totalInterest = 0.0;
+                totalInterest = 0;
             }
             if (amountTowardsPrincipal > 0) {
                 double subPayment = roundCurrency(amountTowardsPrincipal * subProportion);
@@ -86,10 +86,10 @@ public class StudentLoanSimulator extends LoanSimulator {
                 principalSubOwed = roundCurrency(principalSubOwed - subPayment);
                 principalUnsubOwed = roundCurrency(principalUnsubOwed - unsubPayment);
                 if (principalSubOwed < 0) {
-                    principalSubOwed = 0.0;
+                    principalSubOwed = 0;
                 }
                 if (principalUnsubOwed < 0) {
-                    principalUnsubOwed = 0.0;
+                    principalUnsubOwed = 0;
                 }
                 principalTotalOwed = roundCurrency(principalSubOwed + principalUnsubOwed);
             }
@@ -110,22 +110,24 @@ public class StudentLoanSimulator extends LoanSimulator {
 
     @Override
     final void resetState() {
-        annualInterestRate = 0.0;
+        annualInterestRate = 0;
         dailyInterestRate = annualInterestRate / 365.0;
-        semesterUnsubOrig = 0.0;
+        semesterUnsubOrig = 0;
         unsubsidizedOrig = semesterUnsubOrig * YEARS_IN_UNI;
-        semesterSubOrig = 0.0;
+        semesterSubOrig = 0;
         subsidizedOrig = semesterSubOrig * YEARS_IN_UNI;
         principalUnsubOwed = unsubsidizedOrig;
         principalSubOwed = subsidizedOrig;
         origLoanAmount = unsubsidizedOrig + subsidizedOrig;
-        dailyUnsubInterest = 0.0;
-        dailySubInterest = 0.0;
-        monthlyUnsubInterest = 0.0;
-        monthlySubInterest = 0.0;
-        totalUnsubInterest = 0.0;
-        totalSubInterest = 0.0;
-        totalInterestPaid = 0.0;
+        dailyUnsubInterest = 0;
+        dailySubInterest = 0;
+        monthlyUnsubInterest = 0;
+        monthlySubInterest = 0;
+        totalUnsubInterest = 0;
+        totalSubInterest = 0;
+        totalInterestPaid = 0;
+        totalSubBalance = principalSubOwed + totalSubInterest;
+        totalUnsubBalance = principalUnsubOwed + totalUnsubInterest;
     }
 
     @Override
