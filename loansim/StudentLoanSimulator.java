@@ -30,7 +30,7 @@ public class StudentLoanSimulator extends LoanSimulator {
     private double totalSubInterest;
     private double totalSubBalance;
     private double totalUnsubBalance;
-    private double totalBalance;
+    private double totalOwed;
     private double totalInterest;
     private double totalInterestPaid;
     private int count;
@@ -66,17 +66,30 @@ public class StudentLoanSimulator extends LoanSimulator {
         principalTotalOwed = roundCurrency(principalSubOwed + principalUnsubOwed);
         totalSubBalance = roundCurrency(principalSubOwed + totalSubInterest);
         totalUnsubBalance = roundCurrency(principalUnsubOwed + totalUnsubInterest);
-        totalBalance = roundCurrency(totalSubBalance + totalUnsubBalance);
+        totalOwed = roundCurrency(totalSubBalance + totalUnsubBalance);
     }
 
     private void simulate() {
         while (principalTotalOwed > 0) {
             accrueInterest();
-            double subProportion = totalSubBalance / totalBalance;
-            double unsubProportion = totalUnsubBalance / totalBalance;
+            double subProportion = totalSubBalance / totalOwed;
+            double unsubProportion = totalUnsubBalance / totalOwed;
             double payment = count <= MONTHS_IN_UNI ? schoolMonthlyPayment : postgradMonthlyPayment;
-            if (payment > totalUnsubBalance + totalSubBalance) {
+            double amountTowardsPrincipal = 0.0;
+            if (payment > totalInterest) {
+                amountTowardsPrincipal = roundCurrency(payment - totalInterest);
+                totalInterest = 0.0;
             }
+            if (amountTowardsPrincipal > 0) {
+                double subPayment = roundCurrency(amountTowardsPrincipal * subProportion);
+                double unsubPayment = roundCurrency(amountTowardsPrincipal * unsubProportion);
+                principalSubOwed = roundCurrency(principalSubOwed - subPayment);
+                principalUnsubOwed = roundCurrency(principalUnsubOwed - unsubPayment);
+            }
+            totalSubBalance = principalSubOwed + totalSubInterest;
+            totalUnsubBalance = principalUnsubOwed + totalUnsubInterest;
+            totalOwed = totalSubBalance + totalUnsubBalance;
+            totalInterest = totalSubInterest + totalUnsubInterest;
             if (principalTotalOwed <= 0) {
                 return;
             }
@@ -118,10 +131,10 @@ public class StudentLoanSimulator extends LoanSimulator {
     @Override
     final void runSimulation() {
         totalInterestPaid = roundCurrency(totalSubInterest + totalUnsubInterest);
+        simulate();
         String message = "Time elapsed: %d months or %.2f years to pay off your $%.2f loan. "
                 + "%nTotal interest paid: $%.2f%n";
-        System.out.printf(message, count, toYears(count), origLoanAmount, count, toYears(count), totalUnsubInterest,
-                totalInterestPaid);
+        System.out.printf(message, count, toYears(count), origLoanAmount, totalInterestPaid);
     }
 
     @Override
