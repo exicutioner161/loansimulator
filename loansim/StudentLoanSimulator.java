@@ -4,9 +4,6 @@ import exilib.Utils;
 import java.util.Scanner;
 
 public class StudentLoanSimulator extends LoanSimulator {
-    // TODO: STARTED JUNE 5 2026 - COMPLETE REFACTOR
-    // TO CORRECTLY SIMULATE REAL-WORLD LOAN REPAYMENT
-    // AND TAKE CUSTOM LOAN AMOUNTS AND INTEREST RATES
     private static final double MONTHS_IN_UNI = 48.0;
     private static final double YEARS_IN_UNI = 4.0;
     private static final int SEMESTERS_IN_YEAR = 2;
@@ -158,9 +155,11 @@ public class StudentLoanSimulator extends LoanSimulator {
     final void runSimulation() {
         totalInterestPaid = roundCurrency(totalSubInterest + totalUnsubInterest);
         simulate();
-        String message = "Time elapsed: %d months or %.2f years to pay off your $%.2f loan. "
-                + "%nTotal interest paid: $%.2f%n";
-        System.out.printf(message, count, toYears(count), origTotalLoanAmount, totalInterestPaid);
+        String message = "%nTime elapsed: %d months or %.2f years to pay off your $%.2f loan.%n"
+                + "Yearly loan amount: $%.2f%n" + "Interest rate: %.2f%%%n" + "Total interest paid: $%.2f%n"
+                + "Total amount paid: $%.2f%n";
+        System.out.printf(message, count, toYears(count), origTotalLoanAmount, yearlySubOrig + yearlyUnsubOrig,
+                annualInterestRate * 100, totalInterestPaid, totalInterestPaid + origTotalLoanAmount);
     }
 
     @Override
