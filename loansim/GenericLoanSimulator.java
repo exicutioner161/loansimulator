@@ -31,6 +31,7 @@ public class GenericLoanSimulator extends LoanSimulator {
         totalInterestPaid = 0;
         interestType = "";
         origLoanAmount = 0;
+        count = 1;
     }
 
     private double handleLoanInput() {
@@ -83,7 +84,6 @@ public class GenericLoanSimulator extends LoanSimulator {
     }
 
     private void simulateSimple() {
-        count = 1;
         while (principalOwed > 0) {
             double interestBase;
             if (principalOwed <= origLoanAmount) {
@@ -112,7 +112,6 @@ public class GenericLoanSimulator extends LoanSimulator {
     }
 
     private void simulateCompound() {
-        count = 1;
         double amountOwed = origLoanAmount;
         while (amountOwed > 0) {
             double interestBase = amountOwed;
