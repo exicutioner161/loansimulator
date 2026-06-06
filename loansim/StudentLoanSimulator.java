@@ -68,6 +68,22 @@ public class StudentLoanSimulator extends LoanSimulator {
         totalOwed = roundCurrency(totalSubBalance + totalUnsubBalance);
     }
 
+    private boolean makeInterestPayment(double payment, double subProportion, double unsubProportion) {
+        if (payment > totalInterest) {
+            accruedSubInterest = 0;
+            accruedUnsubInterest = 0;
+            totalInterestPaid = roundCurrency(totalInterestPaid + totalInterest);
+            totalInterest = 0;
+            return true;
+        } else {
+            accruedSubInterest = roundCurrency(accruedSubInterest - payment * subProportion);
+            accruedUnsubInterest = roundCurrency(accruedUnsubInterest - payment * unsubProportion);
+            totalInterestPaid = roundCurrency(totalInterestPaid + payment);
+            totalInterest = roundCurrency(totalInterest - payment);
+            return false;
+        }
+    }
+
     private void simulate() {
         while (principalTotalOwed > 0) {
             accrueInterest();
@@ -75,17 +91,9 @@ public class StudentLoanSimulator extends LoanSimulator {
             double unsubProportion = totalUnsubBalance / totalOwed;
             double payment = count <= MONTHS_IN_UNI ? schoolMonthlyPayment : postgradMonthlyPayment;
             double amountTowardsPrincipal = 0;
-            if (payment > totalInterest) {
+            boolean interestPaidOff = makeInterestPayment(payment, subProportion, unsubProportion);
+            if (interestPaidOff) {
                 amountTowardsPrincipal = roundCurrency(payment - totalInterest);
-                accruedSubInterest = 0;
-                accruedUnsubInterest = 0;
-                totalInterestPaid = roundCurrency(totalInterestPaid + totalInterest);
-                totalInterest = 0;
-            } else {
-                accruedSubInterest = roundCurrency(accruedSubInterest - payment * subProportion);
-                accruedUnsubInterest = roundCurrency(accruedUnsubInterest - payment * unsubProportion);
-                totalInterestPaid = roundCurrency(totalInterestPaid + payment);
-                totalInterest = roundCurrency(totalInterest - payment);
             }
             if (amountTowardsPrincipal > 0) {
                 double subPayment = roundCurrency(amountTowardsPrincipal * subProportion);
