@@ -26,9 +26,6 @@ public class StudentLoanSimulator extends LoanSimulator {
     private double accruedSubInterest;
     private double totalUnsubInterest;
     private double totalSubInterest;
-    private double totalSubBalance;
-    private double totalUnsubBalance;
-    private double totalOwed;
     private double totalInterest;
     private double totalInterestPaid;
     private double schoolMonthlyPayment;
@@ -43,71 +40,73 @@ public class StudentLoanSimulator extends LoanSimulator {
     private void accrueSubPostgradInterest() {
         if (count > MONTHS_IN_UNI) {
             dailySubInterest = dailyInterestRate * principalSubOwed;
-            double monthlySubInterest = roundCurrency(dailySubInterest * AVG_DAYS_IN_MONTH);
-            accruedSubInterest = roundCurrency(accruedSubInterest + monthlySubInterest);
-            totalSubInterest = roundCurrency(totalSubInterest + monthlySubInterest);
+            double monthlySubInterest = dailySubInterest * AVG_DAYS_IN_MONTH;
+            accruedSubInterest = accruedSubInterest + monthlySubInterest;
+            totalSubInterest = totalSubInterest + monthlySubInterest;
         }
     }
 
     private void accrueUnsubInterest() {
         dailyUnsubInterest = dailyInterestRate * principalUnsubOwed;
-        double monthlyUnsubInterest = roundCurrency(dailyUnsubInterest * AVG_DAYS_IN_MONTH);
-        accruedUnsubInterest = roundCurrency(accruedUnsubInterest + monthlyUnsubInterest);
-        totalUnsubInterest = roundCurrency(totalUnsubInterest + monthlyUnsubInterest);
+        double monthlyUnsubInterest = dailyUnsubInterest * AVG_DAYS_IN_MONTH;
+        accruedUnsubInterest = accruedUnsubInterest + monthlyUnsubInterest;
+        totalUnsubInterest = totalUnsubInterest + monthlyUnsubInterest;
     }
 
     private void accrueInterest() {
         accrueSubPostgradInterest();
         accrueUnsubInterest();
-        totalInterest = roundCurrency(accruedSubInterest + accruedUnsubInterest);
-        totalSubBalance = roundCurrency(principalSubOwed + accruedSubInterest);
-        totalUnsubBalance = roundCurrency(principalUnsubOwed + accruedUnsubInterest);
-        totalOwed = roundCurrency(totalSubBalance + totalUnsubBalance);
+        totalInterest = accruedSubInterest + accruedUnsubInterest;
     }
 
-    private boolean makeInterestPayment(double payment, double subProportion, double unsubProportion) {
-        if (payment > totalInterest) {
+    private double makeInterestPayment(double payment) {
+        double interestBefore = totalInterest;
+        if (interestBefore <= 0) {
+            return payment;
+        }
+        if (payment >= interestBefore) {
+            totalInterestPaid = totalInterestPaid + interestBefore;
+            double paymentLeft = payment - interestBefore;
             accruedSubInterest = 0;
             accruedUnsubInterest = 0;
-            totalInterestPaid = roundCurrency(totalInterestPaid + totalInterest);
             totalInterest = 0;
-            return true;
+            return paymentLeft;
         } else {
-            accruedSubInterest = roundCurrency(accruedSubInterest - payment * subProportion);
-            accruedUnsubInterest = roundCurrency(accruedUnsubInterest - payment * unsubProportion);
-            totalInterestPaid = roundCurrency(totalInterestPaid + payment);
-            totalInterest = roundCurrency(totalInterest - payment);
-            return false;
+            double subShare = accruedSubInterest / interestBefore;
+            double unsubShare = accruedUnsubInterest / interestBefore;
+            double subPaid = payment * subShare;
+            double unsubPaid = payment * unsubShare;
+            accruedSubInterest = Math.max(0, accruedSubInterest - subPaid);
+            accruedUnsubInterest = Math.max(0, accruedUnsubInterest - unsubPaid);
+            totalInterestPaid = totalInterestPaid + payment;
+            totalInterest = accruedSubInterest + accruedUnsubInterest;
+            return 0.0;
         }
     }
 
-    private void payOffPrincipalAmount(double amountTowardsPrincipal, double subProportion, double unsubProportion) {
-        double subPayment = roundCurrency(amountTowardsPrincipal * subProportion);
-        double unsubPayment = roundCurrency(amountTowardsPrincipal * unsubProportion);
-        principalSubOwed = roundCurrency(principalSubOwed - subPayment);
-        principalUnsubOwed = roundCurrency(principalUnsubOwed - unsubPayment);
+    private void payOffPrincipalAmount(double amountTowardsPrincipal, double subPortion, double unsubPortion) {
+        double subPayment = amountTowardsPrincipal * subPortion;
+        double unsubPayment = amountTowardsPrincipal * unsubPortion;
+        principalSubOwed = principalSubOwed - subPayment;
+        principalUnsubOwed = principalUnsubOwed - unsubPayment;
         if (principalSubOwed < 0) {
             principalSubOwed = 0;
         }
         if (principalUnsubOwed < 0) {
             principalUnsubOwed = 0;
         }
-        principalTotalOwed = roundCurrency(principalSubOwed + principalUnsubOwed);
+        principalTotalOwed = principalSubOwed + principalUnsubOwed;
     }
 
     private void simulate() {
         while (principalTotalOwed > 0) {
             accrueInterest();
-            double subProportion = totalSubBalance / totalOwed;
-            double unsubProportion = totalUnsubBalance / totalOwed;
             double payment = count <= MONTHS_IN_UNI ? schoolMonthlyPayment : postgradMonthlyPayment;
-            double amountTowardsPrincipal = 0;
-            boolean paymentGreaterThanInterest = makeInterestPayment(payment, subProportion, unsubProportion);
-            if (paymentGreaterThanInterest) {
-                amountTowardsPrincipal = roundCurrency(payment - totalInterest);
-            }
+            double amountTowardsPrincipal = makeInterestPayment(payment);
             if (amountTowardsPrincipal > 0) {
-                payOffPrincipalAmount(amountTowardsPrincipal, subProportion, unsubProportion);
+                double principalSubPortion = principalTotalOwed > 0 ? principalSubOwed / principalTotalOwed : 0;
+                double principalUnsubPortion = 1.0 - principalSubPortion;
+                payOffPrincipalAmount(amountTowardsPrincipal, principalSubPortion, principalUnsubPortion);
             }
             if (principalTotalOwed <= 0) {
                 return;
@@ -142,9 +141,6 @@ public class StudentLoanSimulator extends LoanSimulator {
         principalSubOwed = yearlySubOrig * YEARS_IN_UNI;
         principalUnsubOwed = yearlyUnsubOrig * YEARS_IN_UNI;
         principalTotalOwed = origTotalLoanAmount;
-        totalSubBalance = principalSubOwed;
-        totalUnsubBalance = principalUnsubOwed;
-        totalOwed = origTotalLoanAmount;
         annualInterestRate = Utils.validateUserDoubleInput(input, "Annual interest rate (as a percentage): ") / 100.0;
         dailyInterestRate = annualInterestRate / 365.0;
         schoolMonthlyPayment = Utils.validateUserDoubleInput(input, "Monthly payment while in school: ");
@@ -156,7 +152,7 @@ public class StudentLoanSimulator extends LoanSimulator {
         totalInterestPaid = roundCurrency(totalSubInterest + totalUnsubInterest);
         simulate();
         String message = "%nTime elapsed: %d months or %.2f years to pay off your $%.2f loan.%n"
-                + "Yearly loan amount: $%.2f%n" + "Interest rate: %.2f%%%n" + "Total interest paid: $%.2f%n"
+                + "Yearly loan amount: $%.2f%n" + "Interest rate: %.3f%%%n" + "Total interest paid: $%.2f%n"
                 + "Total amount paid: $%.2f%n";
         System.out.printf(message, count, toYears(count), origTotalLoanAmount, yearlySubOrig + yearlyUnsubOrig,
                 annualInterestRate * 100, totalInterestPaid, totalInterestPaid + origTotalLoanAmount);
