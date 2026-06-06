@@ -69,10 +69,10 @@ public class StudentLoanSimulator extends LoanSimulator {
             totalInterest = 0;
             return paymentLeft;
         } else {
-            double subShare = accruedSubInterest / interestBefore;
-            double unsubShare = accruedUnsubInterest / interestBefore;
-            double subPaid = payment * subShare;
-            double unsubPaid = payment * unsubShare;
+            double subPortion = accruedSubInterest / interestBefore;
+            double unsubPortion = accruedUnsubInterest / interestBefore;
+            double subPaid = payment * subPortion;
+            double unsubPaid = payment * unsubPortion;
             accruedSubInterest = Math.max(0, accruedSubInterest - subPaid);
             accruedUnsubInterest = Math.max(0, accruedUnsubInterest - unsubPaid);
             totalInterestPaid = totalInterestPaid + payment;
