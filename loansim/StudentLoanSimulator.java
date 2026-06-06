@@ -102,8 +102,8 @@ public class StudentLoanSimulator extends LoanSimulator {
             double unsubProportion = totalUnsubBalance / totalOwed;
             double payment = count <= MONTHS_IN_UNI ? schoolMonthlyPayment : postgradMonthlyPayment;
             double amountTowardsPrincipal = 0;
-            boolean interestPaidOff = makeInterestPayment(payment, subProportion, unsubProportion);
-            if (interestPaidOff) {
+            boolean paymentGreaterThanInterest = makeInterestPayment(payment, subProportion, unsubProportion);
+            if (paymentGreaterThanInterest) {
                 amountTowardsPrincipal = roundCurrency(payment - totalInterest);
             }
             if (amountTowardsPrincipal > 0) {
