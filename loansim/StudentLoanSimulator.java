@@ -84,6 +84,20 @@ public class StudentLoanSimulator extends LoanSimulator {
         }
     }
 
+    private void payOffPrincipalAmount(double amountTowardsPrincipal, double subProportion, double unsubProportion) {
+        double subPayment = roundCurrency(amountTowardsPrincipal * subProportion);
+        double unsubPayment = roundCurrency(amountTowardsPrincipal * unsubProportion);
+        principalSubOwed = roundCurrency(principalSubOwed - subPayment);
+        principalUnsubOwed = roundCurrency(principalUnsubOwed - unsubPayment);
+        if (principalSubOwed < 0) {
+            principalSubOwed = 0;
+        }
+        if (principalUnsubOwed < 0) {
+            principalUnsubOwed = 0;
+        }
+        principalTotalOwed = roundCurrency(principalSubOwed + principalUnsubOwed);
+    }
+
     private void simulate() {
         while (principalTotalOwed > 0) {
             accrueInterest();
@@ -96,17 +110,7 @@ public class StudentLoanSimulator extends LoanSimulator {
                 amountTowardsPrincipal = roundCurrency(payment - totalInterest);
             }
             if (amountTowardsPrincipal > 0) {
-                double subPayment = roundCurrency(amountTowardsPrincipal * subProportion);
-                double unsubPayment = roundCurrency(amountTowardsPrincipal * unsubProportion);
-                principalSubOwed = roundCurrency(principalSubOwed - subPayment);
-                principalUnsubOwed = roundCurrency(principalUnsubOwed - unsubPayment);
-                if (principalSubOwed < 0) {
-                    principalSubOwed = 0;
-                }
-                if (principalUnsubOwed < 0) {
-                    principalUnsubOwed = 0;
-                }
-                principalTotalOwed = roundCurrency(principalSubOwed + principalUnsubOwed);
+                payOffPrincipalAmount(amountTowardsPrincipal, subProportion, unsubProportion);
             }
             if (principalTotalOwed <= 0) {
                 return;
