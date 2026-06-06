@@ -4,6 +4,7 @@ import exilib.Utils;
 import java.util.Scanner;
 
 public class StudentLoanSimulator extends LoanSimulator {
+    // TODO: SIMULATION IS STILL NOT ALIGNED WITH STUDENTAID LOAN SIMULATOR
     private static final double MONTHS_IN_UNI = 48.0;
     private static final double YEARS_IN_UNI = 4.0;
     private static final int SEMESTERS_IN_YEAR = 2;
