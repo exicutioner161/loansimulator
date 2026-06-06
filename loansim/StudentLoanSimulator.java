@@ -130,18 +130,18 @@ public class StudentLoanSimulator extends LoanSimulator {
 
     @Override
     final void handleInput() {
-        semesterSubOrig = Utils.validateUserDoubleInput(input, "Subsidized loan amount per semester: ");
-        semesterUnsubOrig = Utils.validateUserDoubleInput(input, "Unsubsidized loan amount per semester: ");
+        semesterSubOrig = Utils.takeUserDoubleInput(input, "Subsidized loan amount per semester: ");
+        semesterUnsubOrig = Utils.takeUserDoubleInput(input, "Unsubsidized loan amount per semester: ");
         yearlySubOrig = semesterSubOrig * SEMESTERS_IN_YEAR;
         yearlyUnsubOrig = semesterUnsubOrig * SEMESTERS_IN_YEAR;
         origTotalLoanAmount = (yearlySubOrig + yearlyUnsubOrig) * YEARS_IN_UNI;
         principalSubOwed = yearlySubOrig * YEARS_IN_UNI;
         principalUnsubOwed = yearlyUnsubOrig * YEARS_IN_UNI;
         principalTotalOwed = origTotalLoanAmount;
-        annualInterestRate = Utils.validateUserDoubleInput(input, "Annual interest rate (as a percentage): ") / 100.0;
+        annualInterestRate = Utils.takeUserDoubleInput(input, "Annual interest rate (as a percentage): ") / 100.0;
         monthlyInterestRate = annualInterestRate / 12.0;
-        schoolMonthlyPayment = Utils.validateUserDoubleInput(input, "Monthly payment while in school: ");
-        postgradMonthlyPayment = Utils.validateUserDoubleInput(input, "Monthly payment after graduation: ");
+        schoolMonthlyPayment = Utils.takeUserDoubleInput(input, "Monthly payment while in school: ");
+        postgradMonthlyPayment = Utils.takeUserDoubleInput(input, "Monthly payment after graduation: ");
     }
 
     @Override

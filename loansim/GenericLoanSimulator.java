@@ -36,7 +36,7 @@ public class GenericLoanSimulator extends LoanSimulator {
 
     private double handleLoanInput() {
         while (true) {
-            double loan = Utils.validateUserDoubleInput(input, "Loan amount: ");
+            double loan = Utils.takeUserDoubleInput(input, "Loan amount: ");
             if (loan > 0) {
                 return loan;
             }
@@ -46,7 +46,7 @@ public class GenericLoanSimulator extends LoanSimulator {
 
     private double handleInterestRateInput() {
         while (true) {
-            double rate = Utils.validateUserDoubleInput(input, "Monthly interest rate (as a percentage): ");
+            double rate = Utils.takeUserDoubleInput(input, "Monthly interest rate (as a percentage): ");
             if (rate <= 100 && rate >= 0) {
                 return rate / 100.0;
             }
@@ -55,13 +55,13 @@ public class GenericLoanSimulator extends LoanSimulator {
     }
 
     private double handleMonthlyPaymentInput() {
-        double payment = Utils.validateUserDoubleInput(input, "Monthly payment: ");
+        double payment = Utils.takeUserDoubleInput(input, "Monthly payment: ");
         return roundCurrency(payment);
     }
 
     private String handleInterestTypeInput() {
         while (true) {
-            String type = Utils.validateUserStringInput(input, "Enter the interest type (simple or compound): ");
+            String type = Utils.takeUserStringInput(input, "Enter the interest type (simple or compound): ");
             if (!interestType.equalsIgnoreCase("simple") && !interestType.equalsIgnoreCase("compound")) {
                 return type;
             }

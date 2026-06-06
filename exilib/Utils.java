@@ -71,7 +71,7 @@ public final class Utils {
      * @return the parsed {@code double} entered by the user
      * @throws NullPointerException if {@code input} is {@code null}
      */
-    public static double validateUserDoubleInput(Scanner input, String inputMessage) {
+    public static double takeUserDoubleInput(Scanner input, String inputMessage) {
         String in;
         do {
             System.out.print(inputMessage);
@@ -89,7 +89,7 @@ public final class Utils {
      * @return the parsed {@code int} entered by the user
      * @throws NullPointerException if {@code input} is {@code null}
      */
-    public static int validateUserIntInput(Scanner input, String inputMessage) {
+    public static int takeUserIntInput(Scanner input, String inputMessage) {
         String in;
         do {
             System.out.print(inputMessage);
@@ -108,7 +108,7 @@ public final class Utils {
      * @return the validated non-numeric string entered by the user
      * @throws NullPointerException if {@code input} is {@code null}
      */
-    public static String validateUserStringInput(Scanner input, String inputMessage) {
+    public static String takeUserStringInput(Scanner input, String inputMessage) {
         String in;
         do {
             System.out.print(inputMessage);
