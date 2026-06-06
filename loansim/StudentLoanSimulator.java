@@ -85,6 +85,12 @@ public class StudentLoanSimulator extends LoanSimulator {
                 double unsubPayment = roundCurrency(amountTowardsPrincipal * unsubProportion);
                 principalSubOwed = roundCurrency(principalSubOwed - subPayment);
                 principalUnsubOwed = roundCurrency(principalUnsubOwed - unsubPayment);
+                if (principalSubOwed < 0) {
+                    principalSubOwed = 0.0;
+                }
+                if (principalUnsubOwed < 0) {
+                    principalUnsubOwed = 0.0;
+                }
                 principalTotalOwed = roundCurrency(principalSubOwed + principalUnsubOwed);
             }
             totalSubBalance = principalSubOwed + totalSubInterest;
