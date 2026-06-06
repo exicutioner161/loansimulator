@@ -9,8 +9,9 @@ public class StudentLoanSimulator extends LoanSimulator {
     // AND TAKE CUSTOM LOAN AMOUNTS AND INTEREST RATES
     private static final double MONTHS_IN_UNI = 48.0;
     private static final double YEARS_IN_UNI = 4.0;
+    private static final int SEMESTERS_IN_YEAR = 2;
     private static final double AVG_DAYS_IN_MONTH = 30.436875;
-    private static final double MAX_REPAYMENT_TERM_MONTHS = 360.0;
+    private static final double MAX_REPAYMENT_TERM_MONTHS = 120.0;
     private final Scanner input;
     private double annualInterestRate;
     private double dailyInterestRate;
@@ -33,9 +34,9 @@ public class StudentLoanSimulator extends LoanSimulator {
     private double totalOwed;
     private double totalInterest;
     private double totalInterestPaid;
-    private int count;
     private double schoolMonthlyPayment;
     private double postgradMonthlyPayment;
+    private int count;
 
     public StudentLoanSimulator(Scanner input) {
         resetState();
@@ -62,9 +63,6 @@ public class StudentLoanSimulator extends LoanSimulator {
         accrueSubPostgradInterest();
         accrueUnsubInterest();
         totalInterest = roundCurrency(accruedSubInterest + accruedUnsubInterest);
-        principalSubOwed = roundCurrency(principalSubOwed + accruedSubInterest);
-        principalUnsubOwed = roundCurrency(principalUnsubOwed + accruedUnsubInterest);
-        principalTotalOwed = roundCurrency(principalSubOwed + principalUnsubOwed);
         totalSubBalance = roundCurrency(principalSubOwed + accruedSubInterest);
         totalUnsubBalance = roundCurrency(principalUnsubOwed + accruedUnsubInterest);
         totalOwed = roundCurrency(totalSubBalance + totalUnsubBalance);
@@ -79,9 +77,13 @@ public class StudentLoanSimulator extends LoanSimulator {
             double amountTowardsPrincipal = 0;
             if (payment > totalInterest) {
                 amountTowardsPrincipal = roundCurrency(payment - totalInterest);
+                accruedSubInterest = 0;
+                accruedUnsubInterest = 0;
                 totalInterestPaid = roundCurrency(totalInterestPaid + totalInterest);
                 totalInterest = 0;
             } else {
+                accruedSubInterest = roundCurrency(accruedSubInterest - payment * subProportion);
+                accruedUnsubInterest = roundCurrency(accruedUnsubInterest - payment * unsubProportion);
                 totalInterestPaid = roundCurrency(totalInterestPaid + payment);
                 totalInterest = roundCurrency(totalInterest - payment);
             }
@@ -98,8 +100,6 @@ public class StudentLoanSimulator extends LoanSimulator {
                 }
                 principalTotalOwed = roundCurrency(principalSubOwed + principalUnsubOwed);
             }
-            totalOwed = totalSubBalance + totalUnsubBalance;
-            totalInterest = accruedSubInterest + accruedUnsubInterest;
             if (principalTotalOwed <= 0) {
                 return;
             }
@@ -120,20 +120,21 @@ public class StudentLoanSimulator extends LoanSimulator {
         totalUnsubInterest = 0;
         totalSubInterest = 0;
         totalInterestPaid = 0;
+        count = 1;
     }
 
     @Override
     final void handleInput() {
         semesterSubOrig = Utils.validateUserDoubleInput(input, "Subsidized loan amount per semester: ");
         semesterUnsubOrig = Utils.validateUserDoubleInput(input, "Unsubsidized loan amount per semester: ");
-        yearlySubOrig = semesterSubOrig * 2;
-        yearlyUnsubOrig = semesterUnsubOrig * 2;
+        yearlySubOrig = semesterSubOrig * SEMESTERS_IN_YEAR;
+        yearlyUnsubOrig = semesterUnsubOrig * SEMESTERS_IN_YEAR;
         origTotalLoanAmount = (yearlySubOrig + yearlyUnsubOrig) * YEARS_IN_UNI;
-        principalSubOwed = yearlySubOrig;
-        principalUnsubOwed = yearlyUnsubOrig;
+        principalSubOwed = yearlySubOrig * YEARS_IN_UNI;
+        principalUnsubOwed = yearlyUnsubOrig * YEARS_IN_UNI;
         principalTotalOwed = origTotalLoanAmount;
-        totalSubBalance = yearlySubOrig;
-        totalUnsubBalance = yearlyUnsubOrig;
+        totalSubBalance = principalSubOwed;
+        totalUnsubBalance = principalUnsubOwed;
         totalOwed = origTotalLoanAmount;
         annualInterestRate = Utils.validateUserDoubleInput(input, "Annual interest rate (as a percentage): ") / 100.0;
         dailyInterestRate = annualInterestRate / 365.0;
