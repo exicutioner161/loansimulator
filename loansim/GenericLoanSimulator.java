@@ -29,7 +29,6 @@ public class GenericLoanSimulator extends LoanSimulator {
         totalInterestPaid = 0;
         interestType = "";
         origLoanAmount = 0;
-        months = 1;
     }
 
     private double handleLoanInput() {
@@ -106,7 +105,7 @@ public class GenericLoanSimulator extends LoanSimulator {
 
     private void simulateSimple() {
         double principalOwed = origLoanAmount;
-        while (principalOwed > 0) {
+        for (months = 1; months <= targetRepaymentTermMonths; months++) {
             double interestBase = getSimpleInterestBase(principalOwed);
             monthlyInterest = interestRate * interestBase;
             totalInterestPaid = totalInterestPaid + monthlyInterest;
@@ -118,21 +117,16 @@ public class GenericLoanSimulator extends LoanSimulator {
                 printSimulationStats();
                 return;
             }
-            if (months >= targetRepaymentTermMonths) {
-                String message = "Unable to repay within repayment term!"
-                        + "%nInterest left to pay: $%.2f%nTotal left to pay: $%.2f%n";
-                System.out.printf(message, accruedInterest, principalOwed + accruedInterest);
-                return;
-            }
-            months++;
         }
+        String message = "Unable to repay within repayment term!"
+                + "%nInterest left to pay: $%.2f%nTotal left to pay: $%.2f%n";
+        System.out.printf(message, accruedInterest, principalOwed + accruedInterest);
     }
 
     private void simulateCompound() {
         double amountOwed = origLoanAmount;
-        while (amountOwed > 0) {
-            double interestBase = amountOwed;
-            monthlyInterest = interestRate * interestBase;
+        for (months = 1; months <= targetRepaymentTermMonths; months++) {
+            monthlyInterest = interestRate * amountOwed;
             totalInterestPaid = totalInterestPaid + monthlyInterest;
             amountOwed = amountOwed + accruedInterest;
             accruedInterest += monthlyInterest - monthlyPayment;
@@ -140,14 +134,10 @@ public class GenericLoanSimulator extends LoanSimulator {
                 printSimulationStats();
                 return;
             }
-            if (months >= targetRepaymentTermMonths) {
-                String message = "Unable to repay within repayment term!"
-                        + "%nInterest left to pay: $%.2f%nTotal left to pay: $%.2f%n";
-                System.out.printf(message, accruedInterest, amountOwed + accruedInterest);
-                return;
-            }
-            months++;
         }
+        String message = "Unable to repay within repayment term!"
+                + "%nInterest left to pay: $%.2f%nTotal left to pay: $%.2f%n";
+        System.out.printf(message, accruedInterest, amountOwed + accruedInterest);
     }
 
     @Override
