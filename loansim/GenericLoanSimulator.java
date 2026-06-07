@@ -55,8 +55,13 @@ public class GenericLoanSimulator extends LoanSimulator {
     }
 
     private double handleMonthlyPaymentInput() {
-        double payment = Utils.takeUserDoubleInput(input, "Monthly payment: ");
-        return roundCurrency(payment);
+        while (true) {
+            double payment = Utils.takeUserDoubleInput(input, "Monthly payment: ");
+            if (payment > 0) {
+                return roundCurrency(payment);
+            }
+            System.out.println("Enter a number above zero!");
+        }
     }
 
     private String handleInterestTypeInput() {
