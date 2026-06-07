@@ -120,7 +120,8 @@ public class GenericLoanSimulator extends LoanSimulator {
             double interestBase = amountOwed;
             monthlyInterest = interestRate * interestBase;
             totalInterestPaid = totalInterestPaid + monthlyInterest;
-            amountOwed = amountOwed + monthlyInterest - monthlyPayment;
+            accruedInterest += monthlyInterest - monthlyPayment;
+            amountOwed = amountOwed + accruedInterest;
             if (amountOwed <= 0) {
                 printSimulationStats();
                 return;
