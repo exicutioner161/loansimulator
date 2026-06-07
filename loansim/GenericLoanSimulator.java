@@ -94,11 +94,11 @@ public class GenericLoanSimulator extends LoanSimulator {
     private void simulateSimple() {
         while (principalOwed > 0) {
             double interestBase = getSimpleInterestBase();
-            monthlyInterest = roundCurrency(interestRate * interestBase);
-            totalInterestPaid = roundCurrency(totalInterestPaid + monthlyInterest);
+            monthlyInterest = interestRate * interestBase;
+            totalInterestPaid = totalInterestPaid + monthlyInterest;
             accruedInterest += monthlyInterest - monthlyPayment;
             if (accruedInterest < 0) {
-                principalOwed = roundCurrency(principalOwed + accruedInterest);
+                principalOwed = principalOwed + accruedInterest;
             }
             if (principalOwed <= 0) {
                 printSimulationStats();
@@ -118,9 +118,9 @@ public class GenericLoanSimulator extends LoanSimulator {
         double amountOwed = origLoanAmount;
         while (amountOwed > 0) {
             double interestBase = amountOwed;
-            monthlyInterest = roundCurrency(interestRate * interestBase);
-            totalInterestPaid = roundCurrency(totalInterestPaid + monthlyInterest);
-            amountOwed = roundCurrency(amountOwed + monthlyInterest - monthlyPayment);
+            monthlyInterest = interestRate * interestBase;
+            totalInterestPaid = totalInterestPaid + monthlyInterest;
+            amountOwed = amountOwed + monthlyInterest - monthlyPayment;
             if (amountOwed <= 0) {
                 printSimulationStats();
                 return;
