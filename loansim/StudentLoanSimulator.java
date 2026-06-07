@@ -30,7 +30,7 @@ public class StudentLoanSimulator extends LoanSimulator {
     private double totalInterestPaid;
     private double schoolMonthlyPayment;
     private double postgradMonthlyPayment;
-    private int count;
+    private int months;
 
     public StudentLoanSimulator(Scanner input) {
         resetState();
@@ -38,7 +38,7 @@ public class StudentLoanSimulator extends LoanSimulator {
     }
 
     private void accrueSubPostgradInterest() {
-        if (count > MONTHS_IN_UNI) {
+        if (months > MONTHS_IN_UNI) {
             monthlySubInterest = monthlyInterestRate * principalSubOwed;
             accruedSubInterest = accruedSubInterest + monthlySubInterest;
             totalSubInterest = totalSubInterest + monthlySubInterest;
@@ -97,9 +97,9 @@ public class StudentLoanSimulator extends LoanSimulator {
     }
 
     private void simulate() {
-        for (count = 1; count <= MAX_REPAYMENT_TERM_MONTHS; count++) {
+        for (months = 1; months <= MAX_REPAYMENT_TERM_MONTHS; months++) {
             accrueInterest();
-            double payment = count <= MONTHS_IN_UNI ? schoolMonthlyPayment : postgradMonthlyPayment;
+            double payment = months <= MONTHS_IN_UNI ? schoolMonthlyPayment : postgradMonthlyPayment;
             double amountTowardsPrincipal = makeInterestPayment(payment);
             if (amountTowardsPrincipal > 0) {
                 double principalSubPortion = principalTotalOwed > 0 ? principalSubOwed / principalTotalOwed : 0;
@@ -147,7 +147,7 @@ public class StudentLoanSimulator extends LoanSimulator {
         String message = "%nTime elapsed: %d months or %.2f years to pay off your $%.2f loan.%n"
                 + "Yearly loan amount: $%.2f%n" + "Interest rate: %.3f%%%n" + "Total interest paid: $%.2f%n"
                 + "Total amount paid: $%.2f%n";
-        System.out.printf(message, count, toYears(count), origTotalLoanAmount, yearlySubOrig + yearlyUnsubOrig,
+        System.out.printf(message, months, toYears(months), origTotalLoanAmount, yearlySubOrig + yearlyUnsubOrig,
                 annualInterestRate * 100, totalInterestPaid, totalInterestPaid + origTotalLoanAmount);
     }
 

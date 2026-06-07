@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 public class GenericLoanSimulator extends LoanSimulator {
     private double targetRepaymentTermMonths;
-    private int count;
+    private int months;
     private double accruedInterest;
     private double interestRate;
     private double monthlyPayment;
@@ -29,7 +29,7 @@ public class GenericLoanSimulator extends LoanSimulator {
         totalInterestPaid = 0;
         interestType = "";
         origLoanAmount = 0;
-        count = 1;
+        months = 1;
     }
 
     private double handleLoanInput() {
@@ -101,7 +101,7 @@ public class GenericLoanSimulator extends LoanSimulator {
 
     private void printSimulationStats() {
         String message = "It will take %d months or %.2f years to repay the loan. Total interest paid: $%.2f%n";
-        System.out.printf(message, count, toYears(count), totalInterestPaid);
+        System.out.printf(message, months, toYears(months), totalInterestPaid);
     }
 
     private void simulateSimple() {
@@ -118,13 +118,13 @@ public class GenericLoanSimulator extends LoanSimulator {
                 printSimulationStats();
                 return;
             }
-            if (count >= targetRepaymentTermMonths) {
+            if (months >= targetRepaymentTermMonths) {
                 String message = "Unable to repay within repayment term!"
                         + "%nInterest left to pay: $%.2f%nTotal left to pay: $%.2f%n";
                 System.out.printf(message, accruedInterest, principalOwed + accruedInterest);
                 return;
             }
-            count++;
+            months++;
         }
     }
 
@@ -140,13 +140,13 @@ public class GenericLoanSimulator extends LoanSimulator {
                 printSimulationStats();
                 return;
             }
-            if (count >= targetRepaymentTermMonths) {
+            if (months >= targetRepaymentTermMonths) {
                 String message = "Unable to repay within repayment term!"
                         + "%nInterest left to pay: $%.2f%nTotal left to pay: $%.2f%n";
                 System.out.printf(message, accruedInterest, amountOwed + accruedInterest);
                 return;
             }
-            count++;
+            months++;
         }
     }
 
