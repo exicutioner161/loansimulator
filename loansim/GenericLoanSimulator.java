@@ -4,7 +4,7 @@ import exilib.Utils;
 import java.util.Scanner;
 
 public class GenericLoanSimulator extends LoanSimulator {
-    private double targetRepaymentTerm;
+    private double targetRepaymentTermMonths;
     private int count;
     private double principalOwed;
     private double accruedInterest;
@@ -91,7 +91,7 @@ public class GenericLoanSimulator extends LoanSimulator {
         interestRate = handleInterestRateInput();
         monthlyPayment = handleMonthlyPaymentInput();
         interestType = handleInterestTypeInput();
-        targetRepaymentTerm = handleTargetRepaymentTermInput();
+        targetRepaymentTermMonths = handleTargetRepaymentTermInput();
     }
 
     private double getSimpleInterestBase() {
@@ -120,7 +120,7 @@ public class GenericLoanSimulator extends LoanSimulator {
                 printSimulationStats();
                 return;
             }
-            if (count >= targetRepaymentTerm) {
+            if (count >= targetRepaymentTermMonths) {
                 String message = "Unable to repay within repayment term!"
                         + "%nInterest left to pay: $%.2f%nTotal left to pay: $%.2f%n";
                 System.out.printf(message, accruedInterest, principalOwed + accruedInterest);
@@ -142,7 +142,7 @@ public class GenericLoanSimulator extends LoanSimulator {
                 printSimulationStats();
                 return;
             }
-            if (count >= targetRepaymentTerm) {
+            if (count >= targetRepaymentTermMonths) {
                 String message = "Unable to repay within repayment term!"
                         + "%nInterest left to pay: $%.2f%nTotal left to pay: $%.2f%n";
                 System.out.printf(message, accruedInterest, amountOwed + accruedInterest);
