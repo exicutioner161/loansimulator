@@ -5,11 +5,12 @@ import java.util.Scanner;
 
 public class StudentLoanSimulator extends LoanSimulator {
     // TODO: SIMULATION IS STILL NOT ALIGNED WITH STUDENTAID LOAN SIMULATOR
-    private static final double MONTHS_IN_UNI = 48.0;
-    private static final double YEARS_IN_UNI = 4.0;
+    private static final int MONTHS_IN_UNI = 48;
+    private static final int POSTGRAD_SUB_GRACE_MONTHS = 6;
+    private static final int YEARS_IN_UNI = 4;
     private static final int SEMESTERS_IN_YEAR = 2;
     private static final int MONTHS_IN_SEMESTER = 6;
-    private static final double MAX_REPAYMENT_TERM_MONTHS = 120.0;
+    private static final int MAX_REPAYMENT_TERM_MONTHS = 120;
     private final Scanner input;
     private double annualInterestRate;
     private double monthlyInterestRate;
@@ -39,7 +40,7 @@ public class StudentLoanSimulator extends LoanSimulator {
     }
 
     private void accrueSubPostgradInterest() {
-        if (month > MONTHS_IN_UNI) {
+        if (month > MONTHS_IN_UNI + POSTGRAD_SUB_GRACE_MONTHS) {
             monthlySubInterest = monthlyInterestRate * principalSubOwed;
             accruedSubInterest = accruedSubInterest + monthlySubInterest;
             totalSubInterest = totalSubInterest + monthlySubInterest;
