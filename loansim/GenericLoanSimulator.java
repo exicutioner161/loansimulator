@@ -78,6 +78,14 @@ public class GenericLoanSimulator extends LoanSimulator {
         interestType = handleInterestTypeInput();
     }
 
+    private double getSimpleInterestBase() {
+        if (principalOwed <= origLoanAmount) {
+            return principalOwed;
+        } else {
+            return origLoanAmount;
+        }
+    }
+
     private void printSimulationStats() {
         String message = "It will take %d months or %.2f years to repay the loan. Total interest paid: $%.2f%n";
         System.out.printf(message, count, toYears(count), totalInterestPaid);
@@ -85,12 +93,7 @@ public class GenericLoanSimulator extends LoanSimulator {
 
     private void simulateSimple() {
         while (principalOwed > 0) {
-            double interestBase;
-            if (principalOwed <= origLoanAmount) {
-                interestBase = principalOwed;
-            } else {
-                interestBase = origLoanAmount;
-            }
+            double interestBase = getSimpleInterestBase();
             monthlyInterest = roundCurrency(interestRate * interestBase);
             totalInterestPaid = roundCurrency(totalInterestPaid + monthlyInterest);
             accruedInterest += monthlyInterest - monthlyPayment;
