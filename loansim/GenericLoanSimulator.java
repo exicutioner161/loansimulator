@@ -4,7 +4,7 @@ import exilib.Utils;
 import java.util.Scanner;
 
 public class GenericLoanSimulator extends LoanSimulator {
-    private static final double MAX_REPAYMENT_TERM_MONTHS = 600.0;
+    private double targetRepaymentTerm;
     private int count;
     private double principalOwed;
     private double accruedInterest;
@@ -69,6 +69,16 @@ public class GenericLoanSimulator extends LoanSimulator {
         }
     }
 
+    private double handleTargetRepaymentTermInput() {
+        while (true) {
+            double term = Utils.takeUserDoubleInput(input, "Target repayment term (in years): ");
+            if (term > 0) {
+                return term * 12;
+            }
+            System.out.println("Enter a number above zero!");
+        }
+    }
+
     @Override
     final void handleInput() {
         origLoanAmount = handleLoanInput();
@@ -76,6 +86,7 @@ public class GenericLoanSimulator extends LoanSimulator {
         interestRate = handleInterestRateInput();
         monthlyPayment = handleMonthlyPaymentInput();
         interestType = handleInterestTypeInput();
+        targetRepaymentTerm = handleTargetRepaymentTermInput();
     }
 
     private double getSimpleInterestBase() {
@@ -104,7 +115,7 @@ public class GenericLoanSimulator extends LoanSimulator {
                 printSimulationStats();
                 return;
             }
-            if (count >= MAX_REPAYMENT_TERM_MONTHS) {
+            if (count >= targetRepaymentTerm) {
                 String message = "Unable to repay within repayment term!"
                         + "%nInterest left to pay: $%.2f%nTotal left to pay: $%.2f%n";
                 System.out.printf(message, accruedInterest, principalOwed + accruedInterest);
@@ -126,7 +137,7 @@ public class GenericLoanSimulator extends LoanSimulator {
                 printSimulationStats();
                 return;
             }
-            if (count >= MAX_REPAYMENT_TERM_MONTHS) {
+            if (count >= targetRepaymentTerm) {
                 String message = "Unable to repay within repayment term!"
                         + "%nInterest left to pay: $%.2f%nTotal left to pay: $%.2f%n";
                 System.out.printf(message, accruedInterest, amountOwed + accruedInterest);
