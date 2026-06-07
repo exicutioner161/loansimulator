@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 public class GenericLoanSimulator extends LoanSimulator {
     private double targetRepaymentTermMonths;
-    private int months;
+    private int month;
     private double accruedInterest;
     private double interestRate;
     private double monthlyPayment;
@@ -100,12 +100,12 @@ public class GenericLoanSimulator extends LoanSimulator {
 
     private void printSimulationStats() {
         String message = "It will take %d months or %.2f years to repay the loan. Total interest paid: $%.2f%n";
-        System.out.printf(message, months, toYears(months), totalInterestPaid);
+        System.out.printf(message, month, toYears(month), totalInterestPaid);
     }
 
     private void simulateSimple() {
         double principalOwed = origLoanAmount;
-        for (months = 1; months <= targetRepaymentTermMonths; months++) {
+        for (month = 1; month <= targetRepaymentTermMonths; month++) {
             double interestBase = getSimpleInterestBase(principalOwed);
             monthlyInterest = interestRate * interestBase;
             totalInterestPaid = totalInterestPaid + monthlyInterest;
@@ -125,7 +125,7 @@ public class GenericLoanSimulator extends LoanSimulator {
 
     private void simulateCompound() {
         double amountOwed = origLoanAmount;
-        for (months = 1; months <= targetRepaymentTermMonths; months++) {
+        for (month = 1; month <= targetRepaymentTermMonths; month++) {
             monthlyInterest = interestRate * amountOwed;
             totalInterestPaid = totalInterestPaid + monthlyInterest;
             amountOwed = amountOwed + accruedInterest;

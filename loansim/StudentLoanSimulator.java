@@ -31,7 +31,7 @@ public class StudentLoanSimulator extends LoanSimulator {
     private double totalInterestPaid;
     private double schoolMonthlyPayment;
     private double postgradMonthlyPayment;
-    private int months;
+    private int month;
 
     public StudentLoanSimulator(Scanner input) {
         resetState();
@@ -39,7 +39,7 @@ public class StudentLoanSimulator extends LoanSimulator {
     }
 
     private void accrueSubPostgradInterest() {
-        if (months > MONTHS_IN_UNI) {
+        if (month > MONTHS_IN_UNI) {
             monthlySubInterest = monthlyInterestRate * principalSubOwed;
             accruedSubInterest = accruedSubInterest + monthlySubInterest;
             totalSubInterest = totalSubInterest + monthlySubInterest;
@@ -98,7 +98,7 @@ public class StudentLoanSimulator extends LoanSimulator {
     }
 
     private void disburseSemesterLoanIfNeeded() {
-        if (months <= MONTHS_IN_UNI && (months - 1) % MONTHS_IN_SEMESTER == 0) {
+        if (month <= MONTHS_IN_UNI && (month - 1) % MONTHS_IN_SEMESTER == 0) {
             principalSubOwed += semesterSubOrig;
             principalUnsubOwed += semesterUnsubOrig;
             principalTotalOwed += semesterSubOrig + semesterUnsubOrig;
@@ -106,9 +106,9 @@ public class StudentLoanSimulator extends LoanSimulator {
     }
 
     private void simulate() {
-        for (months = 1; months <= MAX_REPAYMENT_TERM_MONTHS; months++) {
+        for (month = 1; month <= MAX_REPAYMENT_TERM_MONTHS; month++) {
             disburseSemesterLoanIfNeeded();
-            double payment = months <= MONTHS_IN_UNI ? schoolMonthlyPayment : postgradMonthlyPayment;
+            double payment = month <= MONTHS_IN_UNI ? schoolMonthlyPayment : postgradMonthlyPayment;
             double amountTowardsPrincipal = makeInterestPayment(payment);
             if (amountTowardsPrincipal > 0) {
                 double principalSubPortion = principalTotalOwed > 0 ? principalSubOwed / principalTotalOwed : 0;
@@ -157,7 +157,7 @@ public class StudentLoanSimulator extends LoanSimulator {
         String message = "%nTime elapsed: %d months or %.2f years to pay off your $%.2f loan.%n"
                 + "Yearly loan amount: $%.2f%n" + "Interest rate: %.3f%%%n" + "Total interest paid: $%.2f%n"
                 + "Total amount paid: $%.2f%n";
-        System.out.printf(message, months, toYears(months), origTotalLoanAmount, yearlySubOrig + yearlyUnsubOrig,
+        System.out.printf(message, month, toYears(month), origTotalLoanAmount, yearlySubOrig + yearlyUnsubOrig,
                 annualInterestRate * 100, totalInterestPaid, totalInterestPaid + origTotalLoanAmount);
     }
 
