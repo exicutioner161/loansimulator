@@ -8,6 +8,7 @@ public class StudentLoanSimulator extends LoanSimulator {
     private static final double MONTHS_IN_UNI = 48.0;
     private static final double YEARS_IN_UNI = 4.0;
     private static final int SEMESTERS_IN_YEAR = 2;
+    private static final int MONTHS_IN_SEMESTER = 6;
     private static final double MAX_REPAYMENT_TERM_MONTHS = 120.0;
     private final Scanner input;
     private double annualInterestRate;
@@ -96,9 +97,17 @@ public class StudentLoanSimulator extends LoanSimulator {
         principalTotalOwed = principalSubOwed + principalUnsubOwed;
     }
 
+    private void disburseSemesterLoanIfNeeded() {
+        if (months <= MONTHS_IN_UNI && (months - 1) % MONTHS_IN_SEMESTER == 0) {
+            principalSubOwed += semesterSubOrig;
+            principalUnsubOwed += semesterUnsubOrig;
+            principalTotalOwed += semesterSubOrig + semesterUnsubOrig;
+        }
+    }
+
     private void simulate() {
         for (months = 1; months <= MAX_REPAYMENT_TERM_MONTHS; months++) {
-            accrueInterest();
+            disburseSemesterLoanIfNeeded();
             double payment = months <= MONTHS_IN_UNI ? schoolMonthlyPayment : postgradMonthlyPayment;
             double amountTowardsPrincipal = makeInterestPayment(payment);
             if (amountTowardsPrincipal > 0) {
@@ -109,6 +118,7 @@ public class StudentLoanSimulator extends LoanSimulator {
             if (principalTotalOwed <= 0) {
                 return;
             }
+            accrueInterest();
         }
         System.out.println("Unable to repay within repayment term!");
     }
@@ -122,6 +132,9 @@ public class StudentLoanSimulator extends LoanSimulator {
         totalUnsubInterest = 0;
         totalSubInterest = 0;
         totalInterestPaid = 0;
+        principalSubOwed = 0;
+        principalUnsubOwed = 0;
+        principalTotalOwed = 0;
     }
 
     @Override
@@ -131,9 +144,6 @@ public class StudentLoanSimulator extends LoanSimulator {
         yearlySubOrig = semesterSubOrig * SEMESTERS_IN_YEAR;
         yearlyUnsubOrig = semesterUnsubOrig * SEMESTERS_IN_YEAR;
         origTotalLoanAmount = (yearlySubOrig + yearlyUnsubOrig) * YEARS_IN_UNI;
-        principalSubOwed = yearlySubOrig * YEARS_IN_UNI;
-        principalUnsubOwed = yearlyUnsubOrig * YEARS_IN_UNI;
-        principalTotalOwed = origTotalLoanAmount;
         annualInterestRate = Utils.takeUserDoubleInput(input, "Annual interest rate (as a percentage): ") / 100.0;
         monthlyInterestRate = annualInterestRate / 12.0;
         schoolMonthlyPayment = Utils.takeUserDoubleInput(input, "Monthly payment while in school: ");
