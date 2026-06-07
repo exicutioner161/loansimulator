@@ -6,7 +6,6 @@ import java.util.Scanner;
 public class GenericLoanSimulator extends LoanSimulator {
     private double targetRepaymentTermMonths;
     private int count;
-    private double principalOwed;
     private double accruedInterest;
     private double interestRate;
     private double monthlyPayment;
@@ -23,7 +22,6 @@ public class GenericLoanSimulator extends LoanSimulator {
 
     @Override
     final void resetState() {
-        principalOwed = 0;
         accruedInterest = 0;
         interestRate = 0;
         monthlyPayment = 0;
@@ -87,14 +85,13 @@ public class GenericLoanSimulator extends LoanSimulator {
     @Override
     final void handleInput() {
         origLoanAmount = handleLoanInput();
-        principalOwed = origLoanAmount;
         interestRate = handleInterestRateInput();
         monthlyPayment = handleMonthlyPaymentInput();
         interestType = handleInterestTypeInput();
         targetRepaymentTermMonths = handleTargetRepaymentTermInput();
     }
 
-    private double getSimpleInterestBase() {
+    private double getSimpleInterestBase(double principalOwed) {
         if (principalOwed <= origLoanAmount) {
             return principalOwed;
         } else {
@@ -108,8 +105,9 @@ public class GenericLoanSimulator extends LoanSimulator {
     }
 
     private void simulateSimple() {
+        double principalOwed = origLoanAmount;
         while (principalOwed > 0) {
-            double interestBase = getSimpleInterestBase();
+            double interestBase = getSimpleInterestBase(principalOwed);
             monthlyInterest = interestRate * interestBase;
             totalInterestPaid = totalInterestPaid + monthlyInterest;
             accruedInterest += monthlyInterest - monthlyPayment;
@@ -136,8 +134,8 @@ public class GenericLoanSimulator extends LoanSimulator {
             double interestBase = amountOwed;
             monthlyInterest = interestRate * interestBase;
             totalInterestPaid = totalInterestPaid + monthlyInterest;
-            accruedInterest += monthlyInterest - monthlyPayment;
             amountOwed = amountOwed + accruedInterest;
+            accruedInterest += monthlyInterest - monthlyPayment;
             if (amountOwed <= 0) {
                 printSimulationStats();
                 return;
