@@ -97,7 +97,7 @@ public class StudentLoanSimulator extends LoanSimulator {
     }
 
     private void simulate() {
-        while (principalTotalOwed > 0) {
+        for (count = 1; count <= MAX_REPAYMENT_TERM_MONTHS; count++) {
             accrueInterest();
             double payment = count <= MONTHS_IN_UNI ? schoolMonthlyPayment : postgradMonthlyPayment;
             double amountTowardsPrincipal = makeInterestPayment(payment);
@@ -109,12 +109,8 @@ public class StudentLoanSimulator extends LoanSimulator {
             if (principalTotalOwed <= 0) {
                 return;
             }
-            if (count >= MAX_REPAYMENT_TERM_MONTHS) {
-                System.out.println("Unable to repay within repayment term!");
-                return;
-            }
-            count++;
         }
+        System.out.println("Unable to repay within repayment term!");
     }
 
     @Override
@@ -126,7 +122,6 @@ public class StudentLoanSimulator extends LoanSimulator {
         totalUnsubInterest = 0;
         totalSubInterest = 0;
         totalInterestPaid = 0;
-        count = 1;
     }
 
     @Override
