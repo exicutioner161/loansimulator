@@ -107,6 +107,7 @@ public class StudentLoanSimulator extends LoanSimulator {
     }
 
     private void simulate() {
+        // TODO: ITERATE PER DAY INSTEAD OF PER MONTH
         for (month = 1; month <= MAX_REPAYMENT_TERM_MONTHS; month++) {
             disburseSemesterLoanIfNeeded();
             double payment = month <= MONTHS_IN_UNI ? schoolMonthlyPayment : postgradMonthlyPayment;
