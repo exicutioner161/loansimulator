@@ -21,12 +21,23 @@ public final class Utils {
     /**
      * Returns {@code true} if the given string can be parsed as an {@link Integer}.
      *
-     * @param in the string to test; must not be {@code null}
+     * @param in the string to test; may be {@code null}
      * @return {@code true} if {@code in} represents a valid integer, {@code false}
      *         otherwise
-     * @throws NullPointerException if {@code in} is {@code null}
      */
-    public static boolean isInt(String in) {
+    public static boolean isInt(String in) { return in != null && isIntNoNullCheck(in); }
+
+    /**
+     * Returns {@code true} if the given string can be parsed as a {@link Double}.
+     *
+     * @param in the string to test; may be {@code null}
+     * @return {@code true} if {@code in} represents a valid double, {@code false}
+     *         otherwise
+     */
+    public static boolean isDouble(String in) { return in != null && isDoubleNoNullCheck(in); }
+
+    // Helper method for isInt() and isNotNum()
+    private static boolean isIntNoNullCheck(String in) {
         try {
             Integer.valueOf(in);
             return true;
@@ -35,15 +46,8 @@ public final class Utils {
         }
     }
 
-    /**
-     * Returns {@code true} if the given string can be parsed as a {@link Double}.
-     *
-     * @param in the string to test; must not be {@code null}
-     * @return {@code true} if {@code in} represents a valid double, {@code false}
-     *         otherwise
-     * @throws NullPointerException if {@code in} is {@code null}
-     */
-    public static boolean isDouble(String in) {
+    // Helper method for isDouble() and isNotNum()
+    private static boolean isDoubleNoNullCheck(String in) {
         try {
             Double.valueOf(in);
             return true;
@@ -56,25 +60,32 @@ public final class Utils {
      * Returns {@code true} if the input is non-empty and is not a number (neither
      * {@link #isInt(String)} nor {@link #isDouble(String)}).
      *
-     * @param in the string to test; must not be {@code null}
-     * @return {@code true} when {@code in} is non-empty and not numeric
-     * @throws NullPointerException if {@code in} is {@code null}
+     * @param in the string to test; may be {@code null}
+     * @return {@code true} when {@code in} is non-null, non-empty, and not numeric
      */
-    public static boolean isNotNum(String in) { return !in.isEmpty() && !isInt(in) && !isDouble(in); }
+    public static boolean isNotNum(String in) {
+        return in != null && !in.isEmpty() && !isIntNoNullCheck(in) && !isDoubleNoNullCheck(in);
+    }
+
+    private static String validateNonNullString(String in) { return in == null ? "" : in; }
 
     /**
      * Prompt the user with {@code inputMessage} until a valid double is entered.
      *
-     * @param input        the {@link Scanner} to read user input from; must not be
+     * @param input        the {@link Scanner} to read user input from
+     * @param inputMessage the prompt message printed to standard output; may be
      *                     {@code null}
-     * @param inputMessage the prompt message printed to standard output
      * @return the parsed {@code double} entered by the user
-     * @throws NullPointerException if {@code input} is {@code null}
+     * @throws IllegalArgumentException if {@code input} is {@code null}
      */
-    public static double takeUserDoubleInput(Scanner input, String inputMessage) {
+    public static double takeUserDoubleInput(Scanner input, String inputMessage) throws IllegalArgumentException {
+        if (input == null) {
+            throw new IllegalArgumentException();
+        }
+        String message = validateNonNullString(inputMessage);
         String in;
         do {
-            System.out.print(inputMessage);
+            System.out.print(message);
             in = input.nextLine().trim();
         } while (!isDouble(in));
         return Double.parseDouble(in);
@@ -83,35 +94,43 @@ public final class Utils {
     /**
      * Prompt the user with {@code inputMessage} until a valid integer is entered.
      *
-     * @param input        the {@link Scanner} to read user input from; must not be
+     * @param input        the {@link Scanner} to read user input from
+     * @param inputMessage the prompt message printed to standard output; may be
      *                     {@code null}
-     * @param inputMessage the prompt message printed to standard output
      * @return the parsed {@code int} entered by the user
-     * @throws NullPointerException if {@code input} is {@code null}
+     * @throws IllegalArgumentException if {@code input} is {@code null}
      */
-    public static int takeUserIntInput(Scanner input, String inputMessage) {
+    public static int takeUserIntInput(Scanner input, String inputMessage) throws IllegalArgumentException {
+        if (input == null) {
+            throw new IllegalArgumentException();
+        }
+        String message = validateNonNullString(inputMessage);
         String in;
         do {
-            System.out.print(inputMessage);
+            System.out.print(message);
             in = input.nextLine().trim();
         } while (!isInt(in));
         return Integer.parseInt(in);
     }
 
     /**
-     * Prompt the user with {@code inputMessage} until a non-numeric string is
+     * Prompt the user with {@code inputMessage} until a non‑numeric string is
      * entered.
      *
-     * @param input        the {@link Scanner} to read user input from; must not be
+     * @param input        the {@link Scanner} to read user input from
+     * @param inputMessage the prompt message printed to standard output; may be
      *                     {@code null}
-     * @param inputMessage the prompt message printed to standard output
-     * @return the validated non-numeric string entered by the user
-     * @throws NullPointerException if {@code input} is {@code null}
+     * @return the validated non‑numeric string entered by the user
+     * @throws IllegalArgumentException if {@code input} is {@code null}
      */
-    public static String takeUserStringInput(Scanner input, String inputMessage) {
+    public static String takeUserStringInput(Scanner input, String inputMessage) throws IllegalArgumentException {
+        if (input == null) {
+            throw new IllegalArgumentException();
+        }
+        String message = validateNonNullString(inputMessage);
         String in;
         do {
-            System.out.print(inputMessage);
+            System.out.print(message);
             in = input.nextLine().trim();
         } while (!isNotNum(in));
         return in;
