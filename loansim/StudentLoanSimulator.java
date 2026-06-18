@@ -1,6 +1,7 @@
 package loansim;
 
 import exilib.Utils;
+import java.time.LocalDate;
 import java.util.Scanner;
 
 /**
@@ -15,7 +16,9 @@ public class StudentLoanSimulator extends LoanSimulator {
     private static final int SEMESTERS_IN_YEAR = 2;
     private static final int MONTHS_IN_SEMESTER = 6;
     private static final int MAX_REPAYMENT_TERM_MONTHS = 120;
+    private static final int[] DAYS_IN_MONTH = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
     private final Scanner input;
+    private final int startYear;
     private double annualInterestRate;
     private double monthlyInterestRate;
     private double semesterSubOrig;
@@ -47,6 +50,7 @@ public class StudentLoanSimulator extends LoanSimulator {
     public StudentLoanSimulator(Scanner input) {
         resetState();
         this.input = input;
+        this.startYear = LocalDate.now().getYear();
     }
 
     /**
@@ -69,11 +73,99 @@ public class StudentLoanSimulator extends LoanSimulator {
         totalUnsubInterest = totalUnsubInterest + monthlyUnsubInterest;
     }
 
-    /** Update aggregated interest totals used for payment allocation. */
-    private void accrueInterest() {
-        accrueSubPostgradInterest();
-        accrueUnsubInterest();
+    /**
+     * Process daily accrual for the month and perform one-time capitalization of
+     * accrued unsubsidized interest when repayment starts.
+     */
+    private void processMonthlyAccrualAndCapitalization(int monthNumber) {
+        accrueInterestForMonth(monthNumber);
+        capitalizeUnsubIfNeeded(monthNumber);
+    }
+
+    /**
+     * Apply a monthly payment: pay interest first then principal proportionally.
+     */
+    private void applyMonthlyPayment(double payment) {
+        double amountTowardsPrincipal = makeInterestPayment(payment);
+        if (amountTowardsPrincipal > 0) {
+            double principalSubPortion = principalTotalOwed > 0 ? principalSubOwed / principalTotalOwed : 0;
+            double principalUnsubPortion = 1.0 - principalSubPortion;
+            payOffPrincipalAmount(amountTowardsPrincipal, principalSubPortion, principalUnsubPortion);
+        }
+    }
+
+    /**
+     * Return true if the given year is a leap year.
+     */
+    private static boolean isLeapYear(int yr) { return (yr % 4 == 0 && (yr % 100 != 0 || yr % 400 == 0)); }
+
+    /**
+     * Return the number of days in the calendar month for the given 1-based month
+     * index.
+     */
+    private int getDaysInMonth(int monthNumber) {
+        int monthIndex = ((monthNumber - 1) % 12) + 1;
+        int year = startYear + ((monthNumber - 1) / 12);
+        int days = DAYS_IN_MONTH[monthIndex - 1];
+        if (monthIndex == 2 && isLeapYear(year)) {
+            days = 29;
+        }
+        return days;
+    }
+
+    /**
+     * Return the per-day interest rate for the year that contains the given month.
+     */
+    private double calculateYearDailyRate(int monthNumber) {
+        int year = startYear + ((monthNumber - 1) / 12);
+        return annualInterestRate / (isLeapYear(year) ? 366.0 : 365.0);
+    }
+
+    /**
+     * Accrue unsubsidized interest for a single day using the provided daily rate.
+     */
+    private void accrueUnsubDaily(double dailyRate) {
+        double dailyUnsub = dailyRate * principalUnsubOwed;
+        accruedUnsubInterest += dailyUnsub;
+        totalUnsubInterest += dailyUnsub;
+    }
+
+    /**
+     * Accrue subsidized interest for a single day using the provided daily rate.
+     */
+    private void accrueSubDaily(double dailyRate) {
+        double dailySub = dailyRate * principalSubOwed;
+        accruedSubInterest += dailySub;
+        totalSubInterest += dailySub;
+    }
+
+    /**
+     * Accrue interest for every day in the given calendar month identified by
+     * {@code monthNumber} (1-based) and update accrued totals.
+     */
+    private void accrueInterestForMonth(int monthNumber) {
+        int daysThisMonth = getDaysInMonth(monthNumber);
+        double yearDailyRate = calculateYearDailyRate(monthNumber);
+        for (int d = 0; d < daysThisMonth; d++) {
+            accrueUnsubDaily(yearDailyRate);
+            if (month > MONTHS_IN_UNI + POSTGRAD_SUB_GRACE_MONTHS) {
+                accrueSubDaily(yearDailyRate);
+            }
+        }
         totalInterest = accruedSubInterest + accruedUnsubInterest;
+    }
+
+    /** Capitalize accrued unsubsidized interest once at the repayment start. */
+    private void capitalizeUnsubIfNeeded(int monthNumber) {
+        if (!capitalizedUnsub && monthNumber == MONTHS_IN_UNI + POSTGRAD_SUB_GRACE_MONTHS + 1) {
+            if (accruedUnsubInterest > 0) {
+                principalUnsubOwed += accruedUnsubInterest;
+                accruedUnsubInterest = 0;
+                principalTotalOwed = principalSubOwed + principalUnsubOwed;
+                totalInterest = accruedSubInterest + accruedUnsubInterest;
+            }
+            capitalizedUnsub = true;
+        }
     }
 
     /**
@@ -177,26 +269,11 @@ public class StudentLoanSimulator extends LoanSimulator {
      * then principal), accrue interest, and repeat until paid or term limit.
      */
     private void simulate() {
-        // TODO: ITERATE PER DAY INSTEAD OF PER MONTH
         for (month = 1; month <= MAX_REPAYMENT_TERM_MONTHS; month++) {
             disburseSemesterLoanIfNeeded();
-            accrueInterest();
-            if (!capitalizedUnsub && month == MONTHS_IN_UNI + POSTGRAD_SUB_GRACE_MONTHS + 1) {
-                if (accruedUnsubInterest > 0) {
-                    principalUnsubOwed += accruedUnsubInterest;
-                    accruedUnsubInterest = 0;
-                    principalTotalOwed = principalSubOwed + principalUnsubOwed;
-                    totalInterest = accruedSubInterest + accruedUnsubInterest;
-                }
-                capitalizedUnsub = true;
-            }
+            processMonthlyAccrualAndCapitalization(month);
             double payment = month <= MONTHS_IN_UNI ? schoolMonthlyPayment : postgradMonthlyPayment;
-            double amountTowardsPrincipal = makeInterestPayment(payment);
-            if (amountTowardsPrincipal > 0) {
-                double principalSubPortion = principalTotalOwed > 0 ? principalSubOwed / principalTotalOwed : 0;
-                double principalUnsubPortion = 1.0 - principalSubPortion;
-                payOffPrincipalAmount(amountTowardsPrincipal, principalSubPortion, principalUnsubPortion);
-            }
+            applyMonthlyPayment(payment);
             if (principalTotalOwed <= 0) {
                 return;
             }
