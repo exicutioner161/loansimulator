@@ -68,8 +68,6 @@ public class StudentLoanSimulator extends LoanSimulator {
         resetState();
         this.input = input;
     }
-    // (monthly helpers removed) day-by-day simulation uses date-based helpers
-    // below.
 
     /** Disburse semester funds if the date matches a scheduled disbursement. */
     private void processDisbursement(LocalDate date) {
