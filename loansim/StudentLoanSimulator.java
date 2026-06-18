@@ -37,6 +37,7 @@ public class StudentLoanSimulator extends LoanSimulator {
     private double schoolMonthlyPayment;
     private double postgradMonthlyPayment;
     private int month;
+    private boolean capitalizedUnsub;
 
     /**
      * Create a student loan simulator that reads user input from {@code input}.
@@ -179,6 +180,16 @@ public class StudentLoanSimulator extends LoanSimulator {
         // TODO: ITERATE PER DAY INSTEAD OF PER MONTH
         for (month = 1; month <= MAX_REPAYMENT_TERM_MONTHS; month++) {
             disburseSemesterLoanIfNeeded();
+            accrueInterest();
+            if (!capitalizedUnsub && month == MONTHS_IN_UNI + POSTGRAD_SUB_GRACE_MONTHS + 1) {
+                if (accruedUnsubInterest > 0) {
+                    principalUnsubOwed += accruedUnsubInterest;
+                    accruedUnsubInterest = 0;
+                    principalTotalOwed = principalSubOwed + principalUnsubOwed;
+                    totalInterest = accruedSubInterest + accruedUnsubInterest;
+                }
+                capitalizedUnsub = true;
+            }
             double payment = month <= MONTHS_IN_UNI ? schoolMonthlyPayment : postgradMonthlyPayment;
             double amountTowardsPrincipal = makeInterestPayment(payment);
             if (amountTowardsPrincipal > 0) {
@@ -189,7 +200,6 @@ public class StudentLoanSimulator extends LoanSimulator {
             if (principalTotalOwed <= 0) {
                 return;
             }
-            accrueInterest();
         }
         System.out.println("Unable to repay within repayment term!");
     }
@@ -207,6 +217,8 @@ public class StudentLoanSimulator extends LoanSimulator {
         principalSubOwed = 0;
         principalUnsubOwed = 0;
         principalTotalOwed = 0;
+        month = 0;
+        capitalizedUnsub = false;
     }
 
     /**
@@ -229,8 +241,8 @@ public class StudentLoanSimulator extends LoanSimulator {
     /** Run the simulation and print a summary of results. */
     @Override
     final void runSimulation() {
-        totalInterestPaid = roundCurrency(totalInterestPaid);
         simulate();
+        totalInterestPaid = roundCurrency(totalInterestPaid);
         String message = "%nTime elapsed: %d months or %.2f years to pay off your $%.2f loan.%n"
                 + "Yearly loan amount: $%.2f%n" + "Interest rate: %.3f%%%n" + "Total interest paid: $%.2f%n"
                 + "Total amount paid: $%.2f%n";
