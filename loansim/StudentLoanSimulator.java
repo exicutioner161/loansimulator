@@ -2,7 +2,11 @@ package loansim;
 
 import exilib.Utils;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoUnit;
+import java.util.HashSet;
 import java.util.Scanner;
+import java.util.Set;
 
 /**
  * Simulator for federal-style student loans that differentiates subsidized and
@@ -16,9 +20,13 @@ public class StudentLoanSimulator extends LoanSimulator {
     private static final int SEMESTERS_IN_YEAR = 2;
     private static final int MONTHS_IN_SEMESTER = 6;
     private static final int MAX_REPAYMENT_TERM_MONTHS = 120;
-    private static final int[] DAYS_IN_MONTH = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
     private final Scanner input;
-    private final int startYear;
+    private LocalDate firstDisbursementDate;
+    private LocalDate[] disbursementDates;
+    private Set<LocalDate> disbursementDateSet;
+    private LocalDate repaymentStartDate;
+    private int paymentDayOfMonth;
+    private double totalPaid;
     private double annualInterestRate;
     private double semesterSubOrig;
     private double yearlySubOrig;
@@ -37,6 +45,20 @@ public class StudentLoanSimulator extends LoanSimulator {
     private int month;
     private boolean capitalizedUnsub;
 
+    /** Generate semester disbursement dates and compute repayment start date. */
+    private void generateDisbursementSchedule(LocalDate firstDate) {
+        int totalSemesters = YEARS_IN_UNI * SEMESTERS_IN_YEAR;
+        disbursementDates = new LocalDate[totalSemesters];
+        disbursementDateSet = new HashSet<>();
+        for (int i = 0; i < totalSemesters; i++) {
+            LocalDate d = firstDate.plusMonths((long) i * MONTHS_IN_SEMESTER);
+            disbursementDates[i] = d;
+            disbursementDateSet.add(d);
+        }
+        LocalDate graduationDate = firstDate.plusMonths(MONTHS_IN_UNI);
+        repaymentStartDate = graduationDate.plusMonths(POSTGRAD_SUB_GRACE_MONTHS);
+    }
+
     /**
      * Create a student loan simulator that reads user input from {@code input}.
      *
@@ -45,16 +67,44 @@ public class StudentLoanSimulator extends LoanSimulator {
     public StudentLoanSimulator(Scanner input) {
         resetState();
         this.input = input;
-        this.startYear = LocalDate.now().getYear();
+    }
+    // (monthly helpers removed) day-by-day simulation uses date-based helpers
+    // below.
+
+    /** Disburse semester funds if the date matches a scheduled disbursement. */
+    private void processDisbursement(LocalDate date) {
+        if (disbursementDateSet != null && disbursementDateSet.contains(date)) {
+            principalSubOwed += semesterSubOrig;
+            principalUnsubOwed += semesterUnsubOrig;
+            principalTotalOwed += semesterSubOrig + semesterUnsubOrig;
+        }
     }
 
     /**
-     * Process daily accrual for the month and perform one-time capitalization of
-     * accrued unsubsidized interest when repayment starts.
+     * Capitalize accrued unsubsidized interest on the exact repayment start date.
      */
-    private void processMonthlyAccrualAndCapitalization(int monthNumber) {
-        accrueInterestForMonth(monthNumber);
-        capitalizeUnsubIfNeeded(monthNumber);
+    private void maybeCapitalizeUnsub(LocalDate date) {
+        if (!capitalizedUnsub && repaymentStartDate != null && date.equals(repaymentStartDate)) {
+            if (accruedUnsubInterest > 0) {
+                principalUnsubOwed += accruedUnsubInterest;
+                accruedUnsubInterest = 0;
+                principalTotalOwed = principalSubOwed + principalUnsubOwed;
+                totalInterest = accruedSubInterest + accruedUnsubInterest;
+            }
+            capitalizedUnsub = true;
+        }
+    }
+
+    /** Accrue interest for a single day using the correct per-year day count. */
+    private void accrueForDay(LocalDate date) {
+        double dailyRate = annualInterestRate / (isLeapYear(date.getYear()) ? 366.0 : 365.0);
+        if (principalUnsubOwed > 0) {
+            accrueUnsubDaily(dailyRate);
+        }
+        if (!date.isBefore(repaymentStartDate) && principalSubOwed > 0) {
+            accrueSubDaily(dailyRate);
+        }
+        totalInterest = accruedSubInterest + accruedUnsubInterest;
     }
 
     /**
@@ -75,28 +125,6 @@ public class StudentLoanSimulator extends LoanSimulator {
     private static boolean isLeapYear(int yr) { return (yr % 4 == 0 && (yr % 100 != 0 || yr % 400 == 0)); }
 
     /**
-     * Return the number of days in the calendar month for the given 1-based month
-     * index.
-     */
-    private int getDaysInMonth(int monthNumber) {
-        int monthIndex = ((monthNumber - 1) % 12) + 1;
-        int year = startYear + ((monthNumber - 1) / 12);
-        int days = DAYS_IN_MONTH[monthIndex - 1];
-        if (monthIndex == 2 && isLeapYear(year)) {
-            days = 29;
-        }
-        return days;
-    }
-
-    /**
-     * Return the per-day interest rate for the year that contains the given month.
-     */
-    private double calculateYearDailyRate(int monthNumber) {
-        int year = startYear + ((monthNumber - 1) / 12);
-        return annualInterestRate / (isLeapYear(year) ? 366.0 : 365.0);
-    }
-
-    /**
      * Accrue unsubsidized interest for a single day using the provided daily rate.
      */
     private void accrueUnsubDaily(double dailyRate) {
@@ -110,35 +138,6 @@ public class StudentLoanSimulator extends LoanSimulator {
     private void accrueSubDaily(double dailyRate) {
         double dailySub = dailyRate * principalSubOwed;
         accruedSubInterest += dailySub;
-    }
-
-    /**
-     * Accrue interest for every day in the given calendar month identified by
-     * {@code monthNumber} (1-based) and update accrued totals.
-     */
-    private void accrueInterestForMonth(int monthNumber) {
-        int daysThisMonth = getDaysInMonth(monthNumber);
-        double yearDailyRate = calculateYearDailyRate(monthNumber);
-        for (int d = 0; d < daysThisMonth; d++) {
-            accrueUnsubDaily(yearDailyRate);
-            if (month > MONTHS_IN_UNI + POSTGRAD_SUB_GRACE_MONTHS) {
-                accrueSubDaily(yearDailyRate);
-            }
-        }
-        totalInterest = accruedSubInterest + accruedUnsubInterest;
-    }
-
-    /** Capitalize accrued unsubsidized interest once at the repayment start. */
-    private void capitalizeUnsubIfNeeded(int monthNumber) {
-        if (!capitalizedUnsub && monthNumber == MONTHS_IN_UNI + POSTGRAD_SUB_GRACE_MONTHS + 1) {
-            if (accruedUnsubInterest > 0) {
-                principalUnsubOwed += accruedUnsubInterest;
-                accruedUnsubInterest = 0;
-                principalTotalOwed = principalSubOwed + principalUnsubOwed;
-                totalInterest = accruedSubInterest + accruedUnsubInterest;
-            }
-            capitalizedUnsub = true;
-        }
     }
 
     /**
@@ -226,32 +225,45 @@ public class StudentLoanSimulator extends LoanSimulator {
     }
 
     /**
-     * Disburse semester loan amounts at the beginning of each semester while in
-     * school.
-     */
-    private void disburseSemesterLoanIfNeeded() {
-        if (month <= MONTHS_IN_UNI && (month - 1) % MONTHS_IN_SEMESTER == 0) {
-            principalSubOwed += semesterSubOrig;
-            principalUnsubOwed += semesterUnsubOrig;
-            principalTotalOwed += semesterSubOrig + semesterUnsubOrig;
-        }
-    }
-
-    /**
      * The main simulation loop: disburse funds, apply payments (interest first,
      * then principal), accrue interest, and repeat until paid or term limit.
      */
     private void simulate() {
-        for (month = 1; month <= MAX_REPAYMENT_TERM_MONTHS; month++) {
-            disburseSemesterLoanIfNeeded();
-            processMonthlyAccrualAndCapitalization(month);
-            double payment = month <= MONTHS_IN_UNI ? schoolMonthlyPayment : postgradMonthlyPayment;
-            applyMonthlyPayment(payment);
-            if (principalTotalOwed <= 0) {
+        LocalDate endDate = firstDisbursementDate
+                .plusMonths((long) MONTHS_IN_UNI + POSTGRAD_SUB_GRACE_MONTHS + MAX_REPAYMENT_TERM_MONTHS);
+        LocalDate currentDate = firstDisbursementDate;
+        while (!currentDate.isAfter(endDate)) {
+            processDisbursement(currentDate);
+            maybeCapitalizeUnsub(currentDate);
+            accrueForDay(currentDate);
+            boolean finished = applyPaymentIfScheduled(currentDate);
+            if (finished) {
+                month = (int) ChronoUnit.MONTHS.between(firstDisbursementDate, currentDate) + 1;
                 return;
             }
+            currentDate = currentDate.plusDays(1);
         }
         System.out.println("Unable to repay within repayment term!");
+    }
+
+    /**
+     * Apply a scheduled payment on the given date if it matches the configured pay
+     * day.
+     */
+    private boolean applyPaymentIfScheduled(LocalDate date) {
+        int scheduledPayDay = Math.min(paymentDayOfMonth, date.lengthOfMonth());
+        if (date.getDayOfMonth() != scheduledPayDay) {
+            return false;
+        }
+        double payment = date.isBefore(repaymentStartDate) ? schoolMonthlyPayment : postgradMonthlyPayment;
+        double outstanding = totalInterest + principalTotalOwed;
+        if (outstanding <= 0) {
+            return true;
+        }
+        double paymentToUse = Math.min(payment, outstanding);
+        applyMonthlyPayment(paymentToUse);
+        totalPaid += paymentToUse;
+        return principalTotalOwed <= 0;
     }
 
     /** Reset simulator state before running a new simulation. */
@@ -265,6 +277,12 @@ public class StudentLoanSimulator extends LoanSimulator {
         principalTotalOwed = 0;
         month = 0;
         capitalizedUnsub = false;
+        firstDisbursementDate = null;
+        disbursementDates = null;
+        disbursementDateSet = null;
+        repaymentStartDate = null;
+        paymentDayOfMonth = 1;
+        totalPaid = 0;
     }
 
     /**
@@ -281,6 +299,34 @@ public class StudentLoanSimulator extends LoanSimulator {
         annualInterestRate = Utils.takeUserDoubleInput(input, "Annual interest rate (as a percentage): ") / 100.0;
         schoolMonthlyPayment = Utils.takeUserDoubleInput(input, "Monthly payment while in school: ");
         postgradMonthlyPayment = Utils.takeUserDoubleInput(input, "Monthly payment after graduation: ");
+        // Optional: first disbursement date
+        System.out.print("First disbursement date (YYYY-MM-DD) [default today]: ");
+        String dateIn = input.nextLine().trim();
+        if (dateIn.isEmpty()) {
+            firstDisbursementDate = LocalDate.now();
+        } else {
+            try {
+                firstDisbursementDate = LocalDate.parse(dateIn);
+            } catch (DateTimeParseException _) {
+                System.out.println("Invalid date format; using today as first disbursement date.");
+                firstDisbursementDate = LocalDate.now();
+            }
+        }
+        generateDisbursementSchedule(firstDisbursementDate);
+        // Payment day-of-month (optional)
+        int defaultPayDay = repaymentStartDate.getDayOfMonth();
+        System.out.printf("Payment day of month (1-28) [default %d]: ", defaultPayDay);
+        String payDayIn = input.nextLine().trim();
+        if (payDayIn.isEmpty()) {
+            paymentDayOfMonth = defaultPayDay;
+        } else {
+            try {
+                int d = Integer.parseInt(payDayIn);
+                paymentDayOfMonth = Math.clamp(d, 1, 28);
+            } catch (NumberFormatException _) {
+                paymentDayOfMonth = defaultPayDay;
+            }
+        }
     }
 
     /** Run the simulation and print a summary of results. */
@@ -288,11 +334,12 @@ public class StudentLoanSimulator extends LoanSimulator {
     final void runSimulation() {
         simulate();
         totalInterestPaid = roundCurrency(totalInterestPaid);
+        totalPaid = roundCurrency(totalPaid);
         String message = "%nTime elapsed: %d months or %.2f years to pay off your $%.2f loan.%n"
                 + "Yearly loan amount: $%.2f%n" + "Interest rate: %.3f%%%n" + "Total interest paid: $%.2f%n"
                 + "Total amount paid: $%.2f%n";
         System.out.printf(message, month, toYears(month), origTotalLoanAmount, yearlySubOrig + yearlyUnsubOrig,
-                annualInterestRate * 100, totalInterestPaid, totalInterestPaid + origTotalLoanAmount);
+                annualInterestRate * 100, totalInterestPaid, totalPaid);
     }
 
     /** @return total interest paid computed by the simulator */
