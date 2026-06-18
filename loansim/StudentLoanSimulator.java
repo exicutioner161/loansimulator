@@ -76,6 +76,48 @@ public class StudentLoanSimulator extends LoanSimulator {
     }
 
     /**
+     * Apply a payment that is smaller than the total outstanding interest. The
+     * payment is split proportionally between accrued subsidized and unsubsidized
+     * interest, each accrued field is reduced, and the {@code totalInterestPaid} is
+     * increased by the payment amount. No amount remains to reduce principal when
+     * this method returns.
+     *
+     * @param payment        monthly payment amount
+     * @param interestBefore total interest outstanding before the payment
+     * @return {@code 0.0} because the full payment went to interest
+     */
+    private double paymentLessThanInterest(double payment, double interestBefore) {
+        double subPortion = accruedSubInterest / interestBefore;
+        double unsubPortion = accruedUnsubInterest / interestBefore;
+        double subPaid = payment * subPortion;
+        double unsubPaid = payment * unsubPortion;
+        accruedSubInterest = Math.max(0, accruedSubInterest - subPaid);
+        accruedUnsubInterest = Math.max(0, accruedUnsubInterest - unsubPaid);
+        totalInterestPaid = totalInterestPaid + payment;
+        totalInterest = accruedSubInterest + accruedUnsubInterest;
+        return 0.0;
+    }
+
+    /**
+     * Apply a payment that is larger than the total outstanding interest. The
+     * outstanding interest is fully paid (added to {@code totalInterestPaid}) and
+     * the accrued interest fields are cleared. The remaining amount after covering
+     * interest is returned so it can be applied to principal.
+     *
+     * @param payment        monthly payment amount
+     * @param interestBefore total interest outstanding before the payment
+     * @return amount remaining after paying interest, to be applied to principal
+     */
+    private double paymentGreaterThanInterest(double payment, double interestBefore) {
+        totalInterestPaid = totalInterestPaid + interestBefore;
+        double extraAmount = payment - interestBefore;
+        accruedSubInterest = 0;
+        accruedUnsubInterest = 0;
+        totalInterest = 0;
+        return extraAmount;
+    }
+
+    /**
      * Apply the provided payment to outstanding accrued interest first.
      *
      * @param payment monthly payment amount
@@ -87,22 +129,9 @@ public class StudentLoanSimulator extends LoanSimulator {
             return payment;
         }
         if (payment >= interestBefore) {
-            totalInterestPaid = totalInterestPaid + interestBefore;
-            double paymentLeft = payment - interestBefore;
-            accruedSubInterest = 0;
-            accruedUnsubInterest = 0;
-            totalInterest = 0;
-            return paymentLeft;
+            return paymentGreaterThanInterest(payment, interestBefore);
         } else {
-            double subPortion = accruedSubInterest / interestBefore;
-            double unsubPortion = accruedUnsubInterest / interestBefore;
-            double subPaid = payment * subPortion;
-            double unsubPaid = payment * unsubPortion;
-            accruedSubInterest = Math.max(0, accruedSubInterest - subPaid);
-            accruedUnsubInterest = Math.max(0, accruedUnsubInterest - unsubPaid);
-            totalInterestPaid = totalInterestPaid + payment;
-            totalInterest = accruedSubInterest + accruedUnsubInterest;
-            return 0.0;
+            return paymentLessThanInterest(payment, interestBefore);
         }
     }
 
