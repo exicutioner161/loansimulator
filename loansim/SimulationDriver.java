@@ -4,11 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Program entry point and interactive driver for running loan simulators.
+ */
 public class SimulationDriver {
     private SimulationDriver() {
         /* This class should not be instantiated */
     }
 
+    /**
+     * Prompt the user to select a loan type from the menu.
+     *
+     * @param input scanner to read user responses
+     * @return selected loan type as an integer
+     */
     private static int chooseLoanType(Scanner input) {
         String in;
         System.out.println("Which type of loan would you like to simulate?");
@@ -23,6 +32,12 @@ public class SimulationDriver {
         return Integer.parseInt(in);
     }
 
+    /**
+     * Ask the user whether to continue or quit the interactive session.
+     *
+     * @param input scanner to read user responses
+     * @return {@code true} to continue, {@code false} to quit
+     */
     private static boolean continueRunning(Scanner input) {
         while (true) {
             System.out.print("Enter Q to quit or C to continue: ");
@@ -37,6 +52,14 @@ public class SimulationDriver {
         }
     }
 
+    /**
+     * Create and run a simulator based on the selected loan type, collecting
+     * summary statistics for each run.
+     *
+     * @param input        scanner to read user input
+     * @param interestList list that will receive total interest paid values
+     * @param amountList   list that will receive original loan amounts
+     */
     private static void chooseAndRunSimulation(Scanner input, List<Double> interestList, List<Double> amountList) {
         int loanType = chooseLoanType(input);
         do {
@@ -50,6 +73,7 @@ public class SimulationDriver {
         } while (continueRunning(input));
     }
 
+    /** Print a short summary for each completed simulation. */
     private static void printSimulationStats(List<Double> interestList, List<Double> amountList) {
         for (int i = 0; i < interestList.size(); i++) {
             double totalToBePaid = interestList.get(i) + amountList.get(i);
@@ -58,6 +82,10 @@ public class SimulationDriver {
         }
     }
 
+    /**
+     * Main entry point: run the interactive driver and display summaries when the
+     * user finishes.
+     */
     public static void main() {
         try (Scanner input = new Scanner(System.in)) {
             List<Double> interestList = new ArrayList<>();

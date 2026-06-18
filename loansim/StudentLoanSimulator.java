@@ -3,6 +3,10 @@ package loansim;
 import exilib.Utils;
 import java.util.Scanner;
 
+/**
+ * Simulator for federal-style student loans that differentiates subsidized and
+ * unsubsidized portions and supports semester disbursements.
+ */
 public class StudentLoanSimulator extends LoanSimulator {
     // TODO: SIMULATION IS STILL NOT ALIGNED WITH STUDENTAID LOAN SIMULATOR
     private static final int MONTHS_IN_UNI = 48;
@@ -34,11 +38,21 @@ public class StudentLoanSimulator extends LoanSimulator {
     private double postgradMonthlyPayment;
     private int month;
 
+    /**
+     * Create a student loan simulator that reads user input from {@code input}.
+     *
+     * @param input Scanner instance used to prompt the user
+     */
     public StudentLoanSimulator(Scanner input) {
         resetState();
         this.input = input;
     }
 
+    /**
+     * Accrue interest on subsidized principal after the grace period following
+     * graduation. Subsidized loans generally do not accrue while the student is in
+     * school or during the immediate postgrad grace period.
+     */
     private void accrueSubPostgradInterest() {
         if (month > MONTHS_IN_UNI + POSTGRAD_SUB_GRACE_MONTHS) {
             monthlySubInterest = monthlyInterestRate * principalSubOwed;
@@ -47,18 +61,26 @@ public class StudentLoanSimulator extends LoanSimulator {
         }
     }
 
+    /** Accrue interest on unsubsidized principal every month. */
     private void accrueUnsubInterest() {
         monthlyUnsubInterest = monthlyInterestRate * principalUnsubOwed;
         accruedUnsubInterest = accruedUnsubInterest + monthlyUnsubInterest;
         totalUnsubInterest = totalUnsubInterest + monthlyUnsubInterest;
     }
 
+    /** Update aggregated interest totals used for payment allocation. */
     private void accrueInterest() {
         accrueSubPostgradInterest();
         accrueUnsubInterest();
         totalInterest = accruedSubInterest + accruedUnsubInterest;
     }
 
+    /**
+     * Apply the provided payment to outstanding accrued interest first.
+     *
+     * @param payment monthly payment amount
+     * @return amount remaining after interest that can be applied to principal
+     */
     private double makeInterestPayment(double payment) {
         double interestBefore = totalInterest;
         if (interestBefore <= 0) {
@@ -84,6 +106,16 @@ public class StudentLoanSimulator extends LoanSimulator {
         }
     }
 
+    /**
+     * Reduce principal balances by applying the given payment across the two loan
+     * components proportionally to their principal amounts.
+     *
+     * @param amountTowardsPrincipal amount available to reduce principal
+     * @param subPortion             proportion of principal payment for subsidized
+     *                               loans
+     * @param unsubPortion           proportion of principal payment for
+     *                               unsubsidized loans
+     */
     private void payOffPrincipalAmount(double amountTowardsPrincipal, double subPortion, double unsubPortion) {
         double subPayment = amountTowardsPrincipal * subPortion;
         double unsubPayment = amountTowardsPrincipal * unsubPortion;
@@ -98,6 +130,10 @@ public class StudentLoanSimulator extends LoanSimulator {
         principalTotalOwed = principalSubOwed + principalUnsubOwed;
     }
 
+    /**
+     * Disburse semester loan amounts at the beginning of each semester while in
+     * school.
+     */
     private void disburseSemesterLoanIfNeeded() {
         if (month <= MONTHS_IN_UNI && (month - 1) % MONTHS_IN_SEMESTER == 0) {
             principalSubOwed += semesterSubOrig;
@@ -106,6 +142,10 @@ public class StudentLoanSimulator extends LoanSimulator {
         }
     }
 
+    /**
+     * The main simulation loop: disburse funds, apply payments (interest first,
+     * then principal), accrue interest, and repeat until paid or term limit.
+     */
     private void simulate() {
         // TODO: ITERATE PER DAY INSTEAD OF PER MONTH
         for (month = 1; month <= MAX_REPAYMENT_TERM_MONTHS; month++) {
@@ -125,6 +165,7 @@ public class StudentLoanSimulator extends LoanSimulator {
         System.out.println("Unable to repay within repayment term!");
     }
 
+    /** Reset simulator state before running a new simulation. */
     @Override
     final void resetState() {
         monthlyUnsubInterest = 0;
@@ -139,6 +180,10 @@ public class StudentLoanSimulator extends LoanSimulator {
         principalTotalOwed = 0;
     }
 
+    /**
+     * Collect user inputs required by the simulation (semester amounts, rates, and
+     * payment levels).
+     */
     @Override
     final void handleInput() {
         semesterSubOrig = Utils.takeUserDoubleInput(input, "Subsidized loan amount per semester: ");
@@ -152,6 +197,7 @@ public class StudentLoanSimulator extends LoanSimulator {
         postgradMonthlyPayment = Utils.takeUserDoubleInput(input, "Monthly payment after graduation: ");
     }
 
+    /** Run the simulation and print a summary of results. */
     @Override
     final void runSimulation() {
         totalInterestPaid = roundCurrency(totalInterestPaid);
@@ -163,9 +209,11 @@ public class StudentLoanSimulator extends LoanSimulator {
                 annualInterestRate * 100, totalInterestPaid, totalInterestPaid + origTotalLoanAmount);
     }
 
+    /** @return total interest paid computed by the simulator */
     @Override
     public final double getTotalInterestPaid() { return totalInterestPaid; }
 
+    /** @return original total loan amount used by the simulation */
     @Override
     public final double getOriginalLoanAmount() { return origTotalLoanAmount; }
 }

@@ -3,6 +3,9 @@ package loansim;
 import exilib.Utils;
 import java.util.Scanner;
 
+/**
+ * Generic loan simulator supporting simple and compound interest options.
+ */
 public class GenericLoanSimulator extends LoanSimulator {
     private double targetRepaymentTermMonths;
     private int month;
@@ -15,11 +18,17 @@ public class GenericLoanSimulator extends LoanSimulator {
     private double origLoanAmount;
     private final Scanner input;
 
+    /**
+     * Create a new simulator that reads input from the provided {@link Scanner}.
+     *
+     * @param input scanner to read user input from
+     */
     public GenericLoanSimulator(Scanner input) {
         resetState();
         this.input = input;
     }
 
+    /** Reset all internal fields to their default starting values. */
     @Override
     final void resetState() {
         accruedInterest = 0;
@@ -31,6 +40,11 @@ public class GenericLoanSimulator extends LoanSimulator {
         origLoanAmount = 0;
     }
 
+    /**
+     * Prompt for the loan amount and ensure it is positive.
+     *
+     * @return validated loan principal in dollars
+     */
     private double handleLoanInput() {
         while (true) {
             double loan = Utils.takeUserDoubleInput(input, "Loan amount: ");
@@ -41,6 +55,11 @@ public class GenericLoanSimulator extends LoanSimulator {
         }
     }
 
+    /**
+     * Prompt for a monthly interest rate (percentage) and validate range.
+     *
+     * @return monthly interest rate as a decimal (e.g. 0.01 for 1%)
+     */
     private double handleInterestRateInput() {
         while (true) {
             double rate = Utils.takeUserDoubleInput(input, "Monthly interest rate (as a percentage): ");
@@ -51,6 +70,11 @@ public class GenericLoanSimulator extends LoanSimulator {
         }
     }
 
+    /**
+     * Prompt for a monthly payment and round to cents.
+     *
+     * @return monthly payment in dollars (rounded to cents)
+     */
     private double handleMonthlyPaymentInput() {
         while (true) {
             double payment = Utils.takeUserDoubleInput(input, "Monthly payment: ");
@@ -61,6 +85,11 @@ public class GenericLoanSimulator extends LoanSimulator {
         }
     }
 
+    /**
+     * Prompt the user for the interest type (simple or compound).
+     *
+     * @return the validated interest type string
+     */
     private String handleInterestTypeInput() {
         while (true) {
             String type = Utils.takeUserStringInput(input, "Enter the interest type (simple or compound): ");
@@ -71,6 +100,11 @@ public class GenericLoanSimulator extends LoanSimulator {
         }
     }
 
+    /**
+     * Prompt for the target repayment term in years and convert to months.
+     *
+     * @return target repayment term in months
+     */
     private double handleTargetRepaymentTermInput() {
         while (true) {
             double term = Utils.takeUserDoubleInput(input, "Target repayment term (in years): ");
@@ -81,6 +115,7 @@ public class GenericLoanSimulator extends LoanSimulator {
         }
     }
 
+    /** Read required inputs from the user. */
     @Override
     final void handleInput() {
         origLoanAmount = handleLoanInput();
@@ -90,6 +125,12 @@ public class GenericLoanSimulator extends LoanSimulator {
         targetRepaymentTermMonths = handleTargetRepaymentTermInput();
     }
 
+    /**
+     * Compute the base principal used for simple interest calculations.
+     *
+     * @param principalOwed current principal owed
+     * @return the base value used to compute simple interest
+     */
     private double getSimpleInterestBase(double principalOwed) {
         if (principalOwed <= origLoanAmount) {
             return principalOwed;
@@ -98,11 +139,16 @@ public class GenericLoanSimulator extends LoanSimulator {
         }
     }
 
+    /** Print a summary of the simulation results to standard output. */
     private void printSimulationStats() {
         String message = "It will take %d months or %.2f years to repay the loan. Total interest paid: $%.2f%n";
         System.out.printf(message, month, toYears(month), totalInterestPaid);
     }
 
+    /**
+     * Simulate repayment assuming simple interest rules. The method iterates
+     * month-by-month until repayment or target term reached.
+     */
     private void simulateSimple() {
         double principalOwed = origLoanAmount;
         for (month = 1; month <= targetRepaymentTermMonths; month++) {
@@ -123,6 +169,9 @@ public class GenericLoanSimulator extends LoanSimulator {
         System.out.printf(message, accruedInterest, principalOwed + accruedInterest);
     }
 
+    /**
+     * Simulate repayment assuming monthly compound interest.
+     */
     private void simulateCompound() {
         double amountOwed = origLoanAmount;
         for (month = 1; month <= targetRepaymentTermMonths; month++) {
@@ -140,6 +189,7 @@ public class GenericLoanSimulator extends LoanSimulator {
         System.out.printf(message, accruedInterest, amountOwed + accruedInterest);
     }
 
+    /** Choose and run the appropriate simulation variant based on user input. */
     @Override
     final void runSimulation() {
         boolean simpleInterest = interestType.equalsIgnoreCase("simple");
@@ -153,9 +203,15 @@ public class GenericLoanSimulator extends LoanSimulator {
         }
     }
 
+    /**
+     * @return the total interest paid during the simulation
+     */
     @Override
     public final double getTotalInterestPaid() { return totalInterestPaid; }
 
+    /**
+     * @return the original loan amount used for the simulation
+     */
     @Override
     public final double getOriginalLoanAmount() { return origLoanAmount; }
 }
