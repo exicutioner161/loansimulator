@@ -54,26 +54,6 @@ public class StudentLoanSimulator extends LoanSimulator {
     }
 
     /**
-     * Accrue interest on subsidized principal after the grace period following
-     * graduation. Subsidized loans generally do not accrue while the student is in
-     * school or during the immediate postgrad grace period.
-     */
-    private void accrueSubPostgradInterest() {
-        if (month > MONTHS_IN_UNI + POSTGRAD_SUB_GRACE_MONTHS) {
-            monthlySubInterest = monthlyInterestRate * principalSubOwed;
-            accruedSubInterest = accruedSubInterest + monthlySubInterest;
-            totalSubInterest = totalSubInterest + monthlySubInterest;
-        }
-    }
-
-    /** Accrue interest on unsubsidized principal every month. */
-    private void accrueUnsubInterest() {
-        monthlyUnsubInterest = monthlyInterestRate * principalUnsubOwed;
-        accruedUnsubInterest = accruedUnsubInterest + monthlyUnsubInterest;
-        totalUnsubInterest = totalUnsubInterest + monthlyUnsubInterest;
-    }
-
-    /**
      * Process daily accrual for the month and perform one-time capitalization of
      * accrued unsubsidized interest when repayment starts.
      */
