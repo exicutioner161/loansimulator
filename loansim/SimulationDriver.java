@@ -73,7 +73,12 @@ public class SimulationDriver {
         } while (continueRunning(input));
     }
 
-    /** Print a short summary for each completed simulation. */
+    /**
+     * Print a short summary for each completed simulation.
+     *
+     * @param interestList list containing total interest paid for each simulation
+     * @param amountList   list containing original loan amounts for each simulation
+     */
     private static void printSimulationStats(List<Double> interestList, List<Double> amountList) {
         for (int i = 0; i < interestList.size(); i++) {
             double totalToBePaid = interestList.get(i) + amountList.get(i);

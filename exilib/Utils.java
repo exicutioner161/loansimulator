@@ -36,7 +36,14 @@ public final class Utils {
      */
     public static boolean isDouble(String in) { return in != null && isDoubleFast(in); }
 
-    // Helper method for isInt() and isNotNum()
+    /**
+     * Fast check whether a string contains a valid integer representation. This
+     * helper assumes callers have already checked for {@code null}.
+     *
+     * @param in the input string to test (must be non-null)
+     * @return {@code true} if {@code in} parses as an integer, {@code false}
+     *         otherwise
+     */
     private static boolean isIntFast(String in) {
         try {
             Integer.valueOf(in);
@@ -46,7 +53,14 @@ public final class Utils {
         }
     }
 
-    // Helper method for isDouble() and isNotNum()
+    /**
+     * Fast check whether a string contains a valid double representation. This
+     * helper assumes callers have already checked for {@code null}.
+     *
+     * @param in the input string to test (must be non-null)
+     * @return {@code true} if {@code in} parses as a double, {@code false}
+     *         otherwise
+     */
     private static boolean isDoubleFast(String in) {
         try {
             Double.valueOf(in);
@@ -67,6 +81,12 @@ public final class Utils {
         return in != null && !in.isEmpty() && !isIntFast(in) && !isDoubleFast(in);
     }
 
+    /**
+     * Normalize a possibly {@code null} string to a non-null value.
+     *
+     * @param in input string that may be {@code null}
+     * @return original string when non-null, otherwise the empty string
+     */
     private static String validateNonNullString(String in) { return in == null ? "" : in; }
 
     /**
