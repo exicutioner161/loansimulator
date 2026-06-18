@@ -25,7 +25,7 @@ public final class Utils {
      * @return {@code true} if {@code in} represents a valid integer, {@code false}
      *         otherwise
      */
-    public static boolean isInt(String in) { return in != null && isIntNoNullCheck(in); }
+    public static boolean isInt(String in) { return in != null && isIntFast(in); }
 
     /**
      * Returns {@code true} if the given string can be parsed as a {@link Double}.
@@ -34,10 +34,10 @@ public final class Utils {
      * @return {@code true} if {@code in} represents a valid double, {@code false}
      *         otherwise
      */
-    public static boolean isDouble(String in) { return in != null && isDoubleNoNullCheck(in); }
+    public static boolean isDouble(String in) { return in != null && isDoubleFast(in); }
 
     // Helper method for isInt() and isNotNum()
-    private static boolean isIntNoNullCheck(String in) {
+    private static boolean isIntFast(String in) {
         try {
             Integer.valueOf(in);
             return true;
@@ -47,7 +47,7 @@ public final class Utils {
     }
 
     // Helper method for isDouble() and isNotNum()
-    private static boolean isDoubleNoNullCheck(String in) {
+    private static boolean isDoubleFast(String in) {
         try {
             Double.valueOf(in);
             return true;
@@ -64,7 +64,7 @@ public final class Utils {
      * @return {@code true} when {@code in} is non-null, non-empty, and not numeric
      */
     public static boolean isNotNum(String in) {
-        return in != null && !in.isEmpty() && !isIntNoNullCheck(in) && !isDoubleNoNullCheck(in);
+        return in != null && !in.isEmpty() && !isIntFast(in) && !isDoubleFast(in);
     }
 
     private static String validateNonNullString(String in) { return in == null ? "" : in; }
@@ -114,13 +114,13 @@ public final class Utils {
     }
 
     /**
-     * Prompt the user with {@code inputMessage} until a non‑numeric string is
+     * Prompt the user with {@code inputMessage} until a non-numeric string is
      * entered.
      *
      * @param input        the {@link Scanner} to read user input from
      * @param inputMessage the prompt message printed to standard output; may be
      *                     {@code null}
-     * @return the validated non‑numeric string entered by the user
+     * @return the validated non-numeric string entered by the user
      * @throws IllegalArgumentException if {@code input} is {@code null}
      */
     public static String takeUserStringInput(Scanner input, String inputMessage) throws IllegalArgumentException {
