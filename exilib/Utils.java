@@ -19,6 +19,14 @@ public final class Utils {
     }
 
     /**
+     * Round a number to two decimal places.
+     *
+     * @param num number to round
+     * @return the number rounded to two decimal places
+     */
+    public static double roundTwoDigits(double num) { return Math.round(num * 100.0) / 100.0; }
+
+    /**
      * Returns {@code true} if the given string can be parsed as an {@link Integer}.
      *
      * @param in the string to test; may be {@code null}

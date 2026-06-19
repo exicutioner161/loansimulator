@@ -32,14 +32,6 @@ public abstract class LoanSimulator {
     public abstract double getOriginalLoanAmount();
 
     /**
-     * Round a monetary amount to two decimal places (cents).
-     *
-     * @param amount amount in dollars
-     * @return amount rounded to cents
-     */
-    public static final double roundCurrency(double amount) { return Math.round(amount * 100.0) / 100.0; }
-
-    /**
      * Convert months to years and round to two decimal places.
      *
      * @param months number of months
