@@ -24,7 +24,7 @@ public final class Utils {
      * @param num number to round
      * @return the number rounded to two decimal places
      */
-    public static double roundTwoDigits(double num) { return Math.round(num * 100.0) / 100.0; }
+    public static double roundTwoDecimals(double num) { return Math.round(num * 100.0) / 100.0; }
 
     /**
      * Returns {@code true} if the given string can be parsed as an {@link Integer}.

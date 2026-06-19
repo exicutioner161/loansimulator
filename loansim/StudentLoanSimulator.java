@@ -331,8 +331,8 @@ public class StudentLoanSimulator extends LoanSimulator {
     @Override
     final void runSimulation() {
         simulate();
-        totalInterestPaid = Utils.roundTwoDigits(totalInterestPaid);
-        totalPaid = Utils.roundTwoDigits(totalPaid);
+        totalInterestPaid = Utils.roundTwoDecimals(totalInterestPaid);
+        totalPaid = Utils.roundTwoDecimals(totalPaid);
         String message = "%nTime elapsed: %d months or %.2f years to pay off your $%.2f loan.%n"
                 + "Yearly loan amount: $%.2f%n" + "Interest rate: %.3f%%%n" + "Total interest paid: $%.2f%n"
                 + "Total amount paid: $%.2f%n";
