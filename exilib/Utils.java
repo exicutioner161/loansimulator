@@ -25,6 +25,941 @@ public final class Utils {
     }
 
     /**
+     * Sort a generic array using insertion sort.
+     * <p>
+     * Sorts the array in-place using insertion sort, which has O(n^2) time
+     * complexity but is efficient for small or nearly sorted arrays. Null arrays
+     * are ignored.
+     * </p>
+     *
+     * @param <T> the element type; must implement {@link Comparable}
+     * @param arr the array to sort; may be {@code null}
+     */
+    public static <T extends Comparable<T>> void insertionSort(T[] arr) {
+        if (arr == null || arr.length <= 1) {
+            return;
+        }
+        for (int i = 1; i < arr.length; i++) {
+            T key = arr[i];
+            int j = i - 1;
+            while (j >= 0 && key.compareTo(arr[j]) < 0) {
+                arr[j + 1] = arr[j--];
+            }
+            arr[j + 1] = key;
+        }
+    }
+
+    /**
+     * Sort a generic array using selection sort.
+     * <p>
+     * Sorts the array in-place using selection sort, which has O(n^2) time
+     * complexity. Null arrays are ignored.
+     * </p>
+     *
+     * @param <T> the element type; must implement {@link Comparable}
+     * @param arr the array to sort; may be {@code null}
+     */
+    public static <T extends Comparable<T>> void selectionSort(T[] arr) {
+        if (arr == null || arr.length <= 1) {
+            return;
+        }
+        for (int i = 0; i < arr.length - 1; i++) {
+            int min = i;
+            for (int j = i + 1; j < arr.length; j++) {
+                if (arr[j].compareTo(arr[min]) < 0) {
+                    min = j;
+                }
+            }
+            if (min != i) {
+                swap(arr, i, min);
+            }
+        }
+    }
+
+    private static <T extends Comparable<T>> void insertionSortRange(T[] arr, int left, int right) {
+        for (int i = left + 1; i <= right; i++) {
+            T key = arr[i];
+            int j = i - 1;
+            while (j >= left && key.compareTo(arr[j]) < 0) {
+                arr[j + 1] = arr[j];
+                j--;
+            }
+            arr[j + 1] = key;
+        }
+    }
+
+    private static <T extends Comparable<T>> void mergeTo(T[] source, T[] dest, int left, int mid, int right) {
+        if (source[mid].compareTo(source[mid + 1]) <= 0) {
+            System.arraycopy(source, left, dest, left, right - left + 1);
+            return;
+        }
+        int i = left;
+        int j = mid + 1;
+        int k = left;
+        while (i <= mid && j <= right) {
+            if (source[i].compareTo(source[j]) <= 0) {
+                dest[k++] = source[i++];
+            } else {
+                dest[k++] = source[j++];
+            }
+        }
+        while (i <= mid) {
+            dest[k++] = source[i++];
+        }
+        while (j <= right) {
+            dest[k++] = source[j++];
+        }
+    }
+
+    /**
+     * Sort a generic array using merge sort.
+     * <p>
+     * Sorts the array in-place using an optimized bottom-up merge sort with O(n log
+     * n) time complexity. Uses insertion sort for small runs and ping-pong
+     * buffering to reduce intermediate copies. Null arrays are ignored.
+     * </p>
+     *
+     * @param <T> the element type; must implement {@link Comparable}
+     * @param arr the array to sort; may be {@code null}
+     */
+    @SuppressWarnings("unchecked")
+    public static <T extends Comparable<T>> void mergeSort(T[] arr) {
+        if (arr == null || arr.length <= 1) {
+            return;
+        }
+        final int INSERTION_SORT_THRESHOLD = 32;
+        int len = arr.length;
+        if (len <= INSERTION_SORT_THRESHOLD) {
+            insertionSortRange(arr, 0, len - 1);
+            return;
+        }
+        T[] temp = (T[]) new Comparable[len];
+        for (int left = 0; left < len; left += INSERTION_SORT_THRESHOLD) {
+            int right = Math.min(left + INSERTION_SORT_THRESHOLD - 1, len - 1);
+            insertionSortRange(arr, left, right);
+        }
+        T[] source = arr;
+        T[] dest = temp;
+        int width = INSERTION_SORT_THRESHOLD;
+        while (width < len) {
+            for (int left = 0; left < len; left += width << 1) {
+                int mid = Math.min(left + width - 1, len - 1);
+                int right = Math.min(left + (width << 1) - 1, len - 1);
+                if (mid >= right) {
+                    System.arraycopy(source, left, dest, left, right - left + 1);
+                } else {
+                    mergeTo(source, dest, left, mid, right);
+                }
+            }
+            T[] tmp = source;
+            source = dest;
+            dest = tmp;
+            width <<= 1;
+        }
+        if (source != arr) {
+            System.arraycopy(source, 0, arr, 0, len);
+        }
+    }
+
+    /**
+     * Sort a double array using insertion sort.
+     * <p>
+     * Sorts the array in-place using insertion sort, which has O(n^2) time
+     * complexity but is efficient for small or nearly sorted arrays. Null arrays
+     * are ignored.
+     * </p>
+     *
+     * @param arr the array to sort; may be {@code null}
+     */
+    public static void insertionSort(double[] arr) {
+        if (arr == null || arr.length <= 1) {
+            return;
+        }
+        for (int i = 1; i < arr.length; i++) {
+            double key = arr[i];
+            int j = i - 1;
+            while (j >= 0 && key < arr[j]) {
+                arr[j + 1] = arr[j--];
+            }
+            arr[j + 1] = key;
+        }
+    }
+
+    /**
+     * Sort a double array using selection sort.
+     * <p>
+     * Sorts the array in-place using selection sort, which has O(n^2) time
+     * complexity. Null arrays are ignored.
+     * </p>
+     *
+     * @param arr the array to sort; may be {@code null}
+     */
+    public static void selectionSort(double[] arr) {
+        if (arr == null || arr.length <= 1) {
+            return;
+        }
+        for (int i = 0; i < arr.length - 1; i++) {
+            int min = i;
+            for (int j = i + 1; j < arr.length; j++) {
+                if (arr[j] < arr[min]) {
+                    min = j;
+                }
+            }
+            if (min != i) {
+                Utils.swap(arr, i, min);
+            }
+        }
+    }
+
+    private static void insertionSortRange(double[] arr, int left, int right) {
+        for (int i = left + 1; i <= right; i++) {
+            double key = arr[i];
+            int j = i - 1;
+            while (j >= left && arr[j] > key) {
+                arr[j + 1] = arr[j];
+                j--;
+            }
+            arr[j + 1] = key;
+        }
+    }
+
+    private static void mergeTo(double[] source, double[] dest, int left, int mid, int right) {
+        if (source[mid] <= source[mid + 1]) {
+            System.arraycopy(source, left, dest, left, right - left + 1);
+            return;
+        }
+        int i = left;
+        int j = mid + 1;
+        int k = left;
+        while (i <= mid && j <= right) {
+            if (source[i] <= source[j]) {
+                dest[k++] = source[i++];
+            } else {
+                dest[k++] = source[j++];
+            }
+        }
+        while (i <= mid) {
+            dest[k++] = source[i++];
+        }
+        while (j <= right) {
+            dest[k++] = source[j++];
+        }
+    }
+
+    /**
+     * Sort a double array using merge sort.
+     * <p>
+     * Sorts the array in-place using an optimized bottom-up merge sort with O(n log
+     * n) time complexity. Uses insertion sort for small runs and ping-pong
+     * buffering to reduce intermediate copies. Null arrays are ignored.
+     * </p>
+     *
+     * @param arr the array to sort; may be {@code null}
+     */
+    public static void mergeSort(double[] arr) {
+        if (arr == null || arr.length <= 1) {
+            return;
+        }
+        final int INSERTION_SORT_THRESHOLD = 32;
+        int len = arr.length;
+        if (len <= INSERTION_SORT_THRESHOLD) {
+            insertionSortRange(arr, 0, len - 1);
+            return;
+        }
+        double[] temp = new double[len];
+        for (int left = 0; left < len; left += INSERTION_SORT_THRESHOLD) {
+            int right = Math.min(left + INSERTION_SORT_THRESHOLD - 1, len - 1);
+            insertionSortRange(arr, left, right);
+        }
+        double[] source = arr;
+        double[] dest = temp;
+        int width = INSERTION_SORT_THRESHOLD;
+        while (width < len) {
+            for (int left = 0; left < len; left += width << 1) {
+                int mid = Math.min(left + width - 1, len - 1);
+                int right = Math.min(left + (width << 1) - 1, len - 1);
+                if (mid >= right) {
+                    System.arraycopy(source, left, dest, left, right - left + 1);
+                } else {
+                    mergeTo(source, dest, left, mid, right);
+                }
+            }
+            double[] tmp = source;
+            source = dest;
+            dest = tmp;
+            width <<= 1;
+        }
+        if (source != arr) {
+            System.arraycopy(source, 0, arr, 0, len);
+        }
+    }
+
+    /**
+     * Sort a float array using insertion sort.
+     * <p>
+     * Sorts the array in-place using insertion sort, which has O(n^2) time
+     * complexity but is efficient for small or nearly sorted arrays. Null arrays
+     * are ignored.
+     * </p>
+     *
+     * @param arr the array to sort; may be {@code null}
+     */
+    public static void insertionSort(float[] arr) {
+        if (arr == null || arr.length <= 1) {
+            return;
+        }
+        for (int i = 1; i < arr.length; i++) {
+            float key = arr[i];
+            int j = i - 1;
+            while (j >= 0 && key < arr[j]) {
+                arr[j + 1] = arr[j--];
+            }
+            arr[j + 1] = key;
+        }
+    }
+
+    /**
+     * Sort a float array using selection sort.
+     * <p>
+     * Sorts the array in-place using selection sort, which has O(n^2) time
+     * complexity. Null arrays are ignored.
+     * </p>
+     *
+     * @param arr the array to sort; may be {@code null}
+     */
+    public static void selectionSort(float[] arr) {
+        if (arr == null || arr.length <= 1) {
+            return;
+        }
+        for (int i = 0; i < arr.length - 1; i++) {
+            int min = i;
+            for (int j = i + 1; j < arr.length; j++) {
+                if (arr[j] < arr[min]) {
+                    min = j;
+                }
+            }
+            if (min != i) {
+                Utils.swap(arr, i, min);
+            }
+        }
+    }
+
+    private static void insertionSortRange(float[] arr, int left, int right) {
+        for (int i = left + 1; i <= right; i++) {
+            float key = arr[i];
+            int j = i - 1;
+            while (j >= left && arr[j] > key) {
+                arr[j + 1] = arr[j];
+                j--;
+            }
+            arr[j + 1] = key;
+        }
+    }
+
+    private static void mergeTo(float[] source, float[] dest, int left, int mid, int right) {
+        if (source[mid] <= source[mid + 1]) {
+            System.arraycopy(source, left, dest, left, right - left + 1);
+            return;
+        }
+        int i = left;
+        int j = mid + 1;
+        int k = left;
+        while (i <= mid && j <= right) {
+            if (source[i] <= source[j]) {
+                dest[k++] = source[i++];
+            } else {
+                dest[k++] = source[j++];
+            }
+        }
+        while (i <= mid) {
+            dest[k++] = source[i++];
+        }
+        while (j <= right) {
+            dest[k++] = source[j++];
+        }
+    }
+
+    /**
+     * Sort a float array using merge sort.
+     * <p>
+     * Sorts the array in-place using an optimized bottom-up merge sort with O(n log
+     * n) time complexity. Uses insertion sort for small runs and ping-pong
+     * buffering to reduce intermediate copies. Null arrays are ignored.
+     * </p>
+     *
+     * @param arr the array to sort; may be {@code null}
+     */
+    public static void mergeSort(float[] arr) {
+        if (arr == null || arr.length <= 1) {
+            return;
+        }
+        final int INSERTION_SORT_THRESHOLD = 32;
+        int len = arr.length;
+        if (len <= INSERTION_SORT_THRESHOLD) {
+            insertionSortRange(arr, 0, len - 1);
+            return;
+        }
+        float[] temp = new float[len];
+        for (int left = 0; left < len; left += INSERTION_SORT_THRESHOLD) {
+            int right = Math.min(left + INSERTION_SORT_THRESHOLD - 1, len - 1);
+            insertionSortRange(arr, left, right);
+        }
+        float[] source = arr;
+        float[] dest = temp;
+        int width = INSERTION_SORT_THRESHOLD;
+        while (width < len) {
+            for (int left = 0; left < len; left += width << 1) {
+                int mid = Math.min(left + width - 1, len - 1);
+                int right = Math.min(left + (width << 1) - 1, len - 1);
+                if (mid >= right) {
+                    System.arraycopy(source, left, dest, left, right - left + 1);
+                } else {
+                    mergeTo(source, dest, left, mid, right);
+                }
+            }
+            float[] tmp = source;
+            source = dest;
+            dest = tmp;
+            width <<= 1;
+        }
+        if (source != arr) {
+            System.arraycopy(source, 0, arr, 0, len);
+        }
+    }
+
+    /**
+     * Sort a long array using insertion sort.
+     * <p>
+     * Sorts the array in-place using insertion sort, which has O(n^2) time
+     * complexity but is efficient for small or nearly sorted arrays. Null arrays
+     * are ignored.
+     * </p>
+     *
+     * @param arr the array to sort; may be {@code null}
+     */
+    public static void insertionSort(long[] arr) {
+        if (arr == null || arr.length <= 1) {
+            return;
+        }
+        for (int i = 1; i < arr.length; i++) {
+            long key = arr[i];
+            int j = i - 1;
+            while (j >= 0 && key < arr[j]) {
+                arr[j + 1] = arr[j--];
+            }
+            arr[j + 1] = key;
+        }
+    }
+
+    /**
+     * Sort a long array using selection sort.
+     * <p>
+     * Sorts the array in-place using selection sort, which has O(n^2) time
+     * complexity. Null arrays are ignored.
+     * </p>
+     *
+     * @param arr the array to sort; may be {@code null}
+     */
+    public static void selectionSort(long[] arr) {
+        if (arr == null || arr.length <= 1) {
+            return;
+        }
+        for (int i = 0; i < arr.length - 1; i++) {
+            int min = i;
+            for (int j = i + 1; j < arr.length; j++) {
+                if (arr[j] < arr[min]) {
+                    min = j;
+                }
+            }
+            if (min != i) {
+                Utils.swap(arr, i, min);
+            }
+        }
+    }
+
+    private static void insertionSortRange(long[] arr, int left, int right) {
+        for (int i = left + 1; i <= right; i++) {
+            long key = arr[i];
+            int j = i - 1;
+            while (j >= left && arr[j] > key) {
+                arr[j + 1] = arr[j];
+                j--;
+            }
+            arr[j + 1] = key;
+        }
+    }
+
+    private static void mergeTo(long[] source, long[] dest, int left, int mid, int right) {
+        if (source[mid] <= source[mid + 1]) {
+            System.arraycopy(source, left, dest, left, right - left + 1);
+            return;
+        }
+        int i = left;
+        int j = mid + 1;
+        int k = left;
+        while (i <= mid && j <= right) {
+            if (source[i] <= source[j]) {
+                dest[k++] = source[i++];
+            } else {
+                dest[k++] = source[j++];
+            }
+        }
+        while (i <= mid) {
+            dest[k++] = source[i++];
+        }
+        while (j <= right) {
+            dest[k++] = source[j++];
+        }
+    }
+
+    /**
+     * Sort a long array using merge sort.
+     * <p>
+     * Sorts the array in-place using an optimized bottom-up merge sort with O(n log
+     * n) time complexity. Uses insertion sort for small runs and ping-pong
+     * buffering to reduce intermediate copies. Null arrays are ignored.
+     * </p>
+     *
+     * @param arr the array to sort; may be {@code null}
+     */
+    public static void mergeSort(long[] arr) {
+        if (arr == null || arr.length <= 1) {
+            return;
+        }
+        final int INSERTION_SORT_THRESHOLD = 32;
+        int len = arr.length;
+        if (len <= INSERTION_SORT_THRESHOLD) {
+            insertionSortRange(arr, 0, len - 1);
+            return;
+        }
+        long[] temp = new long[len];
+        for (int left = 0; left < len; left += INSERTION_SORT_THRESHOLD) {
+            int right = Math.min(left + INSERTION_SORT_THRESHOLD - 1, len - 1);
+            insertionSortRange(arr, left, right);
+        }
+        long[] source = arr;
+        long[] dest = temp;
+        int width = INSERTION_SORT_THRESHOLD;
+        while (width < len) {
+            for (int left = 0; left < len; left += width << 1) {
+                int mid = Math.min(left + width - 1, len - 1);
+                int right = Math.min(left + (width << 1) - 1, len - 1);
+                if (mid >= right) {
+                    System.arraycopy(source, left, dest, left, right - left + 1);
+                } else {
+                    mergeTo(source, dest, left, mid, right);
+                }
+            }
+            long[] tmp = source;
+            source = dest;
+            dest = tmp;
+            width <<= 1;
+        }
+        if (source != arr) {
+            System.arraycopy(source, 0, arr, 0, len);
+        }
+    }
+
+    /**
+     * Sort an int array using insertion sort.
+     * <p>
+     * Sorts the array in-place using insertion sort, which has O(n^2) time
+     * complexity but is efficient for small or nearly sorted arrays. Null arrays
+     * are ignored.
+     * </p>
+     *
+     * @param arr the array to sort; may be {@code null}
+     */
+    public static void insertionSort(int[] arr) {
+        if (arr == null || arr.length <= 1) {
+            return;
+        }
+        for (int i = 1; i < arr.length; i++) {
+            int key = arr[i];
+            int j = i - 1;
+            while (j >= 0 && key < arr[j]) {
+                arr[j + 1] = arr[j--];
+            }
+            arr[j + 1] = key;
+        }
+    }
+
+    /**
+     * Sort an int array using selection sort.
+     * <p>
+     * Sorts the array in-place using selection sort, which has O(n^2) time
+     * complexity. Null arrays are ignored.
+     * </p>
+     *
+     * @param arr the array to sort; may be {@code null}
+     */
+    public static void selectionSort(int[] arr) {
+        if (arr == null || arr.length <= 1) {
+            return;
+        }
+        for (int i = 0; i < arr.length - 1; i++) {
+            int min = i;
+            for (int j = i + 1; j < arr.length; j++) {
+                if (arr[j] < arr[min]) {
+                    min = j;
+                }
+            }
+            if (min != i) {
+                Utils.swap(arr, i, min);
+            }
+        }
+    }
+
+    private static void insertionSortRange(int[] arr, int left, int right) {
+        for (int i = left + 1; i <= right; i++) {
+            int key = arr[i];
+            int j = i - 1;
+            while (j >= left && arr[j] > key) {
+                arr[j + 1] = arr[j];
+                j--;
+            }
+            arr[j + 1] = key;
+        }
+    }
+
+    private static void mergeTo(int[] source, int[] dest, int left, int mid, int right) {
+        if (source[mid] <= source[mid + 1]) {
+            System.arraycopy(source, left, dest, left, right - left + 1);
+            return;
+        }
+        int i = left;
+        int j = mid + 1;
+        int k = left;
+        while (i <= mid && j <= right) {
+            if (source[i] <= source[j]) {
+                dest[k++] = source[i++];
+            } else {
+                dest[k++] = source[j++];
+            }
+        }
+        while (i <= mid) {
+            dest[k++] = source[i++];
+        }
+        while (j <= right) {
+            dest[k++] = source[j++];
+        }
+    }
+
+    /**
+     * Sort an int array using merge sort.
+     * <p>
+     * Sorts the array in-place using an optimized bottom-up merge sort with O(n log
+     * n) time complexity. Uses insertion sort for small runs and ping-pong
+     * buffering to reduce intermediate copies. Null arrays are ignored.
+     * </p>
+     *
+     * @param arr the array to sort; may be {@code null}
+     */
+    public static void mergeSort(int[] arr) {
+        if (arr == null || arr.length <= 1) {
+            return;
+        }
+        final int INSERTION_SORT_THRESHOLD = 32;
+        int len = arr.length;
+        if (len <= INSERTION_SORT_THRESHOLD) {
+            insertionSortRange(arr, 0, len - 1);
+            return;
+        }
+        int[] temp = new int[len];
+        for (int left = 0; left < len; left += INSERTION_SORT_THRESHOLD) {
+            int right = Math.min(left + INSERTION_SORT_THRESHOLD - 1, len - 1);
+            insertionSortRange(arr, left, right);
+        }
+        int[] source = arr;
+        int[] dest = temp;
+        int width = INSERTION_SORT_THRESHOLD;
+        while (width < len) {
+            for (int left = 0; left < len; left += width << 1) {
+                int mid = Math.min(left + width - 1, len - 1);
+                int right = Math.min(left + (width << 1) - 1, len - 1);
+                if (mid >= right) {
+                    System.arraycopy(source, left, dest, left, right - left + 1);
+                } else {
+                    mergeTo(source, dest, left, mid, right);
+                }
+            }
+            int[] tmp = source;
+            source = dest;
+            dest = tmp;
+            width <<= 1;
+        }
+        if (source != arr) {
+            System.arraycopy(source, 0, arr, 0, len);
+        }
+    }
+
+    /**
+     * Sort a short array using insertion sort.
+     * <p>
+     * Sorts the array in-place using insertion sort, which has O(n^2) time
+     * complexity but is efficient for small or nearly sorted arrays. Null arrays
+     * are ignored.
+     * </p>
+     *
+     * @param arr the array to sort; may be {@code null}
+     */
+    public static void insertionSort(short[] arr) {
+        if (arr == null || arr.length <= 1) {
+            return;
+        }
+        for (int i = 1; i < arr.length; i++) {
+            short key = arr[i];
+            int j = i - 1;
+            while (j >= 0 && key < arr[j]) {
+                arr[j + 1] = arr[j--];
+            }
+            arr[j + 1] = key;
+        }
+    }
+
+    /**
+     * Sort a short array using selection sort.
+     * <p>
+     * Sorts the array in-place using selection sort, which has O(n^2) time
+     * complexity. Null arrays are ignored.
+     * </p>
+     *
+     * @param arr the array to sort; may be {@code null}
+     */
+    public static void selectionSort(short[] arr) {
+        if (arr == null || arr.length <= 1) {
+            return;
+        }
+        for (int i = 0; i < arr.length - 1; i++) {
+            int min = i;
+            for (int j = i + 1; j < arr.length; j++) {
+                if (arr[j] < arr[min]) {
+                    min = j;
+                }
+            }
+            if (min != i) {
+                Utils.swap(arr, i, min);
+            }
+        }
+    }
+
+    private static void insertionSortRange(short[] arr, int left, int right) {
+        for (int i = left + 1; i <= right; i++) {
+            short key = arr[i];
+            int j = i - 1;
+            while (j >= left && arr[j] > key) {
+                arr[j + 1] = arr[j];
+                j--;
+            }
+            arr[j + 1] = key;
+        }
+    }
+
+    private static void mergeTo(short[] source, short[] dest, int left, int mid, int right) {
+        if (source[mid] <= source[mid + 1]) {
+            System.arraycopy(source, left, dest, left, right - left + 1);
+            return;
+        }
+        int i = left;
+        int j = mid + 1;
+        int k = left;
+        while (i <= mid && j <= right) {
+            if (source[i] <= source[j]) {
+                dest[k++] = source[i++];
+            } else {
+                dest[k++] = source[j++];
+            }
+        }
+        while (i <= mid) {
+            dest[k++] = source[i++];
+        }
+        while (j <= right) {
+            dest[k++] = source[j++];
+        }
+    }
+
+    /**
+     * Sort a short array using merge sort.
+     * <p>
+     * Sorts the array in-place using an optimized bottom-up merge sort with O(n log
+     * n) time complexity. Uses insertion sort for small runs and ping-pong
+     * buffering to reduce intermediate copies. Null arrays are ignored.
+     * </p>
+     *
+     * @param arr the array to sort; may be {@code null}
+     */
+    public static void mergeSort(short[] arr) {
+        if (arr == null || arr.length <= 1) {
+            return;
+        }
+        final int INSERTION_SORT_THRESHOLD = 32;
+        int len = arr.length;
+        if (len <= INSERTION_SORT_THRESHOLD) {
+            insertionSortRange(arr, 0, len - 1);
+            return;
+        }
+        short[] temp = new short[len];
+        for (int left = 0; left < len; left += INSERTION_SORT_THRESHOLD) {
+            int right = Math.min(left + INSERTION_SORT_THRESHOLD - 1, len - 1);
+            insertionSortRange(arr, left, right);
+        }
+        short[] source = arr;
+        short[] dest = temp;
+        int width = INSERTION_SORT_THRESHOLD;
+        while (width < len) {
+            for (int left = 0; left < len; left += width << 1) {
+                int mid = Math.min(left + width - 1, len - 1);
+                int right = Math.min(left + (width << 1) - 1, len - 1);
+                if (mid >= right) {
+                    System.arraycopy(source, left, dest, left, right - left + 1);
+                } else {
+                    mergeTo(source, dest, left, mid, right);
+                }
+            }
+            short[] tmp = source;
+            source = dest;
+            dest = tmp;
+            width <<= 1;
+        }
+        if (source != arr) {
+            System.arraycopy(source, 0, arr, 0, len);
+        }
+    }
+
+    /**
+     * Sort a byte array using insertion sort.
+     * <p>
+     * Sorts the array in-place using insertion sort, which has O(n^2) time
+     * complexity but is efficient for small or nearly sorted arrays. Null arrays
+     * are ignored.
+     * </p>
+     *
+     * @param arr the array to sort; may be {@code null}
+     */
+    public static void insertionSort(byte[] arr) {
+        if (arr == null || arr.length <= 1) {
+            return;
+        }
+        for (int i = 1; i < arr.length; i++) {
+            byte key = arr[i];
+            int j = i - 1;
+            while (j >= 0 && key < arr[j]) {
+                arr[j + 1] = arr[j--];
+            }
+            arr[j + 1] = key;
+        }
+    }
+
+    /**
+     * Sort a byte array using selection sort.
+     * <p>
+     * Sorts the array in-place using selection sort, which has O(n^2) time
+     * complexity. Null arrays are ignored.
+     * </p>
+     *
+     * @param arr the array to sort; may be {@code null}
+     */
+    public static void selectionSort(byte[] arr) {
+        if (arr == null || arr.length <= 1) {
+            return;
+        }
+        for (int i = 0; i < arr.length - 1; i++) {
+            int min = i;
+            for (int j = i + 1; j < arr.length; j++) {
+                if (arr[j] < arr[min]) {
+                    min = j;
+                }
+            }
+            if (min != i) {
+                Utils.swap(arr, i, min);
+            }
+        }
+    }
+
+    private static void insertionSortRange(byte[] arr, int left, int right) {
+        for (int i = left + 1; i <= right; i++) {
+            byte key = arr[i];
+            int j = i - 1;
+            while (j >= left && arr[j] > key) {
+                arr[j + 1] = arr[j];
+                j--;
+            }
+            arr[j + 1] = key;
+        }
+    }
+
+    private static void mergeTo(byte[] source, byte[] dest, int left, int mid, int right) {
+        if (source[mid] <= source[mid + 1]) {
+            System.arraycopy(source, left, dest, left, right - left + 1);
+            return;
+        }
+        int i = left;
+        int j = mid + 1;
+        int k = left;
+        while (i <= mid && j <= right) {
+            if (source[i] <= source[j]) {
+                dest[k++] = source[i++];
+            } else {
+                dest[k++] = source[j++];
+            }
+        }
+        while (i <= mid) {
+            dest[k++] = source[i++];
+        }
+        while (j <= right) {
+            dest[k++] = source[j++];
+        }
+    }
+
+    /**
+     * Sort a byte array using merge sort.
+     * <p>
+     * Sorts the array in-place using an optimized bottom-up merge sort with O(n log
+     * n) time complexity. Uses insertion sort for small runs and ping-pong
+     * buffering to reduce intermediate copies. Null arrays are ignored.
+     * </p>
+     *
+     * @param arr the array to sort; may be {@code null}
+     */
+    public static void mergeSort(byte[] arr) {
+        if (arr == null || arr.length <= 1) {
+            return;
+        }
+        final int INSERTION_SORT_THRESHOLD = 32;
+        int len = arr.length;
+        if (len <= INSERTION_SORT_THRESHOLD) {
+            insertionSortRange(arr, 0, len - 1);
+            return;
+        }
+        byte[] temp = new byte[len];
+        for (int left = 0; left < len; left += INSERTION_SORT_THRESHOLD) {
+            int right = Math.min(left + INSERTION_SORT_THRESHOLD - 1, len - 1);
+            insertionSortRange(arr, left, right);
+        }
+        byte[] source = arr;
+        byte[] dest = temp;
+        int width = INSERTION_SORT_THRESHOLD;
+        while (width < len) {
+            for (int left = 0; left < len; left += width << 1) {
+                int mid = Math.min(left + width - 1, len - 1);
+                int right = Math.min(left + (width << 1) - 1, len - 1);
+                if (mid >= right) {
+                    System.arraycopy(source, left, dest, left, right - left + 1);
+                } else {
+                    mergeTo(source, dest, left, mid, right);
+                }
+            }
+            byte[] tmp = source;
+            source = dest;
+            dest = tmp;
+            width <<= 1;
+        }
+        if (source != arr) {
+            System.arraycopy(source, 0, arr, 0, len);
+        }
+    }
+
+    /**
      * Convert months to years and round to two decimal places.
      *
      * @param months number of months
@@ -324,6 +1259,69 @@ public final class Utils {
     }
 
     /**
+     * Swap two elements in an {@code double} array in-place.
+     *
+     * <p>
+     * Exchanges the elements at the specified indices; this method mutates the
+     * provided array.
+     * </p>
+     *
+     * @param arr    the array containing the elements to swap; must not be
+     *               {@code null}
+     * @param indexA 0-based index of the first element to swap
+     * @param indexB 0-based index of the second element to swap
+     * @throws NullPointerException           if {@code arr} is {@code null}
+     * @throws ArrayIndexOutOfBoundsException if either index is out of range
+     */
+    public static void swap(double[] arr, int indexA, int indexB) {
+        double temp = arr[indexA];
+        arr[indexA] = arr[indexB];
+        arr[indexB] = temp;
+    }
+
+    /**
+     * Swap two elements in an {@code float} array in-place.
+     *
+     * <p>
+     * Exchanges the elements at the specified indices; this method mutates the
+     * provided array.
+     * </p>
+     *
+     * @param arr    the array containing the elements to swap; must not be
+     *               {@code null}
+     * @param indexA 0-based index of the first element to swap
+     * @param indexB 0-based index of the second element to swap
+     * @throws NullPointerException           if {@code arr} is {@code null}
+     * @throws ArrayIndexOutOfBoundsException if either index is out of range
+     */
+    public static void swap(float[] arr, int indexA, int indexB) {
+        float temp = arr[indexA];
+        arr[indexA] = arr[indexB];
+        arr[indexB] = temp;
+    }
+
+    /**
+     * Swap two elements in an {@code long} array in-place.
+     *
+     * <p>
+     * Exchanges the elements at the specified indices; this method mutates the
+     * provided array.
+     * </p>
+     *
+     * @param arr    the array containing the elements to swap; must not be
+     *               {@code null}
+     * @param indexA 0-based index of the first element to swap
+     * @param indexB 0-based index of the second element to swap
+     * @throws NullPointerException           if {@code arr} is {@code null}
+     * @throws ArrayIndexOutOfBoundsException if either index is out of range
+     */
+    public static void swap(long[] arr, int indexA, int indexB) {
+        long temp = arr[indexA];
+        arr[indexA] = arr[indexB];
+        arr[indexB] = temp;
+    }
+
+    /**
      * Swap two elements in an {@code int} array in-place.
      *
      * <p>
@@ -340,6 +1338,69 @@ public final class Utils {
      */
     public static void swap(int[] arr, int indexA, int indexB) {
         int temp = arr[indexA];
+        arr[indexA] = arr[indexB];
+        arr[indexB] = temp;
+    }
+
+    /**
+     * Swap two elements in an {@code short} array in-place.
+     *
+     * <p>
+     * Exchanges the elements at the specified indices; this method mutates the
+     * provided array.
+     * </p>
+     *
+     * @param arr    the array containing the elements to swap; must not be
+     *               {@code null}
+     * @param indexA 0-based index of the first element to swap
+     * @param indexB 0-based index of the second element to swap
+     * @throws NullPointerException           if {@code arr} is {@code null}
+     * @throws ArrayIndexOutOfBoundsException if either index is out of range
+     */
+    public static void swap(short[] arr, int indexA, int indexB) {
+        short temp = arr[indexA];
+        arr[indexA] = arr[indexB];
+        arr[indexB] = temp;
+    }
+
+    /**
+     * Swap two elements in an {@code byte} array in-place.
+     *
+     * <p>
+     * Exchanges the elements at the specified indices; this method mutates the
+     * provided array.
+     * </p>
+     *
+     * @param arr    the array containing the elements to swap; must not be
+     *               {@code null}
+     * @param indexA 0-based index of the first element to swap
+     * @param indexB 0-based index of the second element to swap
+     * @throws NullPointerException           if {@code arr} is {@code null}
+     * @throws ArrayIndexOutOfBoundsException if either index is out of range
+     */
+    public static void swap(byte[] arr, int indexA, int indexB) {
+        byte temp = arr[indexA];
+        arr[indexA] = arr[indexB];
+        arr[indexB] = temp;
+    }
+
+    /**
+     * Swap two elements in a {@code T} array in-place.
+     *
+     * <p>
+     * Exchanges the elements at the specified indices; this method mutates the
+     * provided array.
+     * </p>
+     *
+     * @param arr    the array containing the elements to swap; must not be
+     *               {@code null}
+     * @param indexA 0-based index of the first element to swap
+     * @param indexB 0-based index of the second element to swap
+     * @throws NullPointerException           if {@code arr} is {@code null}
+     * @throws ArrayIndexOutOfBoundsException if either index is out of range
+     */
+    public static <T> void swap(T[] arr, int indexA, int indexB) {
+        T temp = arr[indexA];
         arr[indexA] = arr[indexB];
         arr[indexB] = temp;
     }
