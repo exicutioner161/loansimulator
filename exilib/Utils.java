@@ -30,7 +30,7 @@ public final class Utils {
      * @param months number of months
      * @return equivalent years rounded to two decimal places
      */
-    public static final double toYears(int months) { return Math.round(months / 12.0 * 100.0) / 100.0; }
+    public static double toYears(int months) { return Math.round(months / 12.0 * 100.0) / 100.0; }
 
     /**
      * Print an object array to standard output using
