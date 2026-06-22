@@ -31,14 +31,6 @@ public abstract class LoanSimulator {
      */
     public abstract double getOriginalLoanAmount();
 
-    /**
-     * Convert months to years and round to two decimal places.
-     *
-     * @param months number of months
-     * @return equivalent years rounded to two decimal places
-     */
-    public static final double toYears(int months) { return Math.round(months / 12.0 * 100.0) / 100.0; }
-
     /** Run the standard simulator lifecycle: reset, input, then execute. */
     public final void run() {
         resetState();

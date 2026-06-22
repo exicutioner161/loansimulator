@@ -19,6 +19,14 @@ public final class Utils {
     }
 
     /**
+     * Convert months to years and round to two decimal places.
+     *
+     * @param months number of months
+     * @return equivalent years rounded to two decimal places
+     */
+    public static final double toYears(int months) { return Math.round(months / 12.0 * 100.0) / 100.0; }
+
+    /**
      * Round a number to two decimal places.
      *
      * @param num number to round

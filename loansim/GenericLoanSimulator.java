@@ -142,7 +142,7 @@ public class GenericLoanSimulator extends LoanSimulator {
     /** Print a summary of the simulation results to standard output. */
     private void printSimulationStats() {
         String message = "It will take %d months or %.2f years to repay the loan. Total interest paid: $%.2f%n";
-        System.out.printf(message, month, toYears(month), totalInterestPaid);
+        System.out.printf(message, month, Utils.toYears(month), totalInterestPaid);
     }
 
     /**

@@ -336,7 +336,7 @@ public class StudentLoanSimulator extends LoanSimulator {
         String message = "%nTime elapsed: %d months or %.2f years to pay off your $%.2f loan.%n"
                 + "Yearly loan amount: $%.2f%n" + "Interest rate: %.3f%%%n" + "Total interest paid: $%.2f%n"
                 + "Total amount paid: $%.2f%n";
-        System.out.printf(message, month, toYears(month), origTotalLoanAmount, yearlySubOrig + yearlyUnsubOrig,
+        System.out.printf(message, month, Utils.toYears(month), origTotalLoanAmount, yearlySubOrig + yearlyUnsubOrig,
                 annualInterestRate * 100, totalInterestPaid, totalPaid);
     }
 
