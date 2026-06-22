@@ -1,18 +1,24 @@
 package exilib;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 import java.util.Scanner;
 
 /**
- * Utility helpers for parsing and validating user input.
+ * Utility helpers for commonly used operations.
  *
  * <p>
  * Provides static helper methods to check whether a string represents an
  * integer or double, to test whether a string is non-numeric, and to prompt for
  * validated input using a {@link java.util.Scanner}.
- * <p>
+ * </p>
  * This class is not instantiable.
  */
 public final class Utils {
+    private static final Random RAND = new Random();
+
     /** Prevent instantiation of this utility class. */
     private Utils() {
         /* This utility class should not be instantiated */
@@ -25,6 +31,579 @@ public final class Utils {
      * @return equivalent years rounded to two decimal places
      */
     public static final double toYears(int months) { return Math.round(months / 12.0 * 100.0) / 100.0; }
+
+    /**
+     * Print an object array to standard output using
+     * {@link Arrays#toString(Object[])}.
+     *
+     * @param arr the array to print; may be {@code null}
+     */
+    public static void print(Object[] arr) { System.out.println(Arrays.toString(arr)); }
+
+    /**
+     * Print a float array to standard output using
+     * {@link Arrays#toString(float[])}.
+     *
+     * @param arr the array to print; may be {@code null}
+     */
+    public static void print(float[] arr) { System.out.println(Arrays.toString(arr)); }
+
+    /**
+     * Print a double array to standard output using
+     * {@link Arrays#toString(double[])}.
+     *
+     * @param arr the array to print; may be {@code null}
+     */
+    public static void print(double[] arr) { System.out.println(Arrays.toString(arr)); }
+
+    /**
+     * Print a long array to standard output using {@link Arrays#toString(long[])}.
+     *
+     * @param arr the array to print; may be {@code null}
+     */
+    public static void print(long[] arr) { System.out.println(Arrays.toString(arr)); }
+
+    /**
+     * Print an int array to standard output using {@link Arrays#toString(int[])}.
+     *
+     * @param arr the array to print; may be {@code null}
+     */
+    public static void print(int[] arr) { System.out.println(Arrays.toString(arr)); }
+
+    /**
+     * Print a short array to standard output using
+     * {@link Arrays#toString(short[])}.
+     *
+     * @param arr the array to print; may be {@code null}
+     */
+    public static void print(short[] arr) { System.out.println(Arrays.toString(arr)); }
+
+    /**
+     * Print a byte array to standard output using {@link Arrays#toString(byte[])}.
+     *
+     * @param arr the array to print; may be {@code null}
+     */
+    public static void print(byte[] arr) { System.out.println(Arrays.toString(arr)); }
+
+    /**
+     * Print a {@link List} to standard output using {@link #listStr(List)}.
+     *
+     * @param list the list to print; may be {@code null}
+     */
+    public static void print(List<?> list) { System.out.println(listStr(list)); }
+
+    /**
+     * Return a compact string representation of the provided {@link List}.
+     *
+     * <p>
+     * The representation uses each element's {@code toString()} value and follows
+     * the conventional list format (for example: {@code [a, b, c]}). Special cases
+     * are handled explicitly: when {@code list} is {@code null} this method returns
+     * the literal string {@code "null"}; when the list is empty this method returns
+     * {@code "[]"}.
+     * </p>
+     *
+     * @param list the list to convert to a string; may be {@code null}
+     * @return a non-null string representation of the list
+     */
+    public static String listStr(List<?> list) {
+        if (list == null) {
+            return "null";
+        }
+        int max = list.size() - 1;
+        if (max == -1) {
+            return "[]";
+        }
+        var sb = new StringBuilder();
+        sb.append('[');
+        for (int i = 0; i < max; i++) {
+            sb.append(list.get(i).toString()).append(", ");
+        }
+        sb.append(list.get(max)).append("]");
+        return sb.toString();
+    }
+
+    /**
+     * Fill the given integer array with pseudorandom values in the range
+     * {@code [0, arr.length)}.
+     *
+     * <p>
+     * This method mutates the provided array in-place. It uses a shared
+     * {@link Random} instance and calls {@link Random#nextInt(int,int)} for each
+     * slot.
+     * </p>
+     *
+     * @param arr the array to fill; must not be {@code null}
+     * @throws NullPointerException if {@code arr} is {@code null}
+     * @implNote If {@code arr.length == 0} the method returns immediately and no
+     *           random values are generated.
+     */
+    public static void fillRandomArray(int[] arr) {
+        final int n = arr.length << 1;
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = RAND.nextInt(0, n);
+        }
+    }
+
+    /**
+     * Create and return a new {@code int} array of the given length filled with
+     * pseudorandom values in the range {@code [0, length)}.
+     *
+     * <p>
+     * The returned array is newly allocated and populated using the shared
+     * {@link Random} instance. Each element is produced by
+     * {@link Random#nextInt(int,int)} with origin {@code 0} and bound equal to the
+     * array length.
+     * </p>
+     *
+     * @param length the length of the array to create; must be non-negative
+     * @return a newly allocated array of length {@code length} containing
+     *         pseudorandom values in {@code [0, length)}
+     * @throws NegativeArraySizeException if {@code length} is negative
+     * @implNote If {@code length == 0} an empty array is returned and no random
+     *           values are generated.
+     */
+    public static int[] newRandomArray(int length) {
+        var arr = new int[length];
+        final int n = length << 1;
+        for (int i = 0; i < length; i++) {
+            arr[i] = RAND.nextInt(0, n);
+        }
+        return arr;
+    }
+
+    /**
+     * Create a shallow copy of the given array.
+     *
+     * <p>
+     * Returns a new array containing the same element references as the original.
+     * The copy is a shallow copy; elements themselves are not cloned.
+     * </p>
+     *
+     * @param <T> the array element type
+     * @param arr the source array to copy; must not be {@code null}
+     * @return a new array containing the same elements in the same order
+     * @throws NullPointerException if {@code arr} is {@code null}
+     * @implNote The implementation performs an unchecked cast by converting an
+     *           {@code Object[]} to {@code T[]}.
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T[] copy(T[] arr) {
+        if (arr.length == 0) {
+            return (T[]) new Object[0];
+        }
+        T[] copy = (T[]) new Object[arr.length];
+        System.arraycopy(arr, 0, copy, 0, arr.length);
+        return copy;
+    }
+
+    /**
+     * Create a shallow copy of the given array.
+     *
+     * <p>
+     * Returns a new array containing the same {@code long} values as the original.
+     * </p>
+     *
+     * @param arr the source array to copy; must not be {@code null}
+     * @return a new array containing the same elements in the same order
+     * @throws NullPointerException if {@code arr} is {@code null}
+     */
+    public static long[] copy(long[] arr) {
+        long[] copy = new long[arr.length];
+        System.arraycopy(arr, 0, copy, 0, arr.length);
+        return copy;
+    }
+
+    /**
+     * Create a shallow copy of the given array.
+     *
+     * <p>
+     * Returns a new array containing the same {@code int} values as the original.
+     * </p>
+     *
+     * @param arr the source array to copy; must not be {@code null}
+     * @return a new array containing the same elements in the same order
+     * @throws NullPointerException if {@code arr} is {@code null}
+     */
+    public static int[] copy(int[] arr) {
+        int[] copy = new int[arr.length];
+        System.arraycopy(arr, 0, copy, 0, arr.length);
+        return copy;
+    }
+
+    /**
+     * Create a shallow copy of the given array.
+     *
+     * <p>
+     * Returns a new array containing the same {@code short} values as the original.
+     * </p>
+     *
+     * @param arr the source array to copy; must not be {@code null}
+     * @return a new array containing the same elements in the same order
+     * @throws NullPointerException if {@code arr} is {@code null}
+     */
+    public static short[] copy(short[] arr) {
+        short[] copy = new short[arr.length];
+        System.arraycopy(arr, 0, copy, 0, arr.length);
+        return copy;
+    }
+
+    /**
+     * Create a shallow copy of the given array.
+     *
+     * <p>
+     * Returns a new array containing the same {@code byte} values as the original.
+     * </p>
+     *
+     * @param arr the source array to copy; must not be {@code null}
+     * @return a new array containing the same elements in the same order
+     * @throws NullPointerException if {@code arr} is {@code null}
+     */
+    public static byte[] copy(byte[] arr) {
+        byte[] copy = new byte[arr.length];
+        System.arraycopy(arr, 0, copy, 0, arr.length);
+        return copy;
+    }
+
+    /**
+     * Create a shallow copy of the given array.
+     *
+     * <p>
+     * Returns a new array containing the same {@code double} values as the
+     * original.
+     * </p>
+     *
+     * @param arr the source array to copy; must not be {@code null}
+     * @return a new array containing the same elements in the same order
+     * @throws NullPointerException if {@code arr} is {@code null}
+     */
+    public static double[] copy(double[] arr) {
+        double[] copy = new double[arr.length];
+        System.arraycopy(arr, 0, copy, 0, arr.length);
+        return copy;
+    }
+
+    /**
+     * Create a shallow copy of the given array.
+     *
+     * <p>
+     * Returns a new array containing the same {@code float} values as the original.
+     * </p>
+     *
+     * @param arr the source array to copy; must not be {@code null}
+     * @return a new array containing the same elements in the same order
+     * @throws NullPointerException if {@code arr} is {@code null}
+     */
+    public static float[] copy(float[] arr) {
+        float[] copy = new float[arr.length];
+        System.arraycopy(arr, 0, copy, 0, arr.length);
+        return copy;
+    }
+
+    /**
+     * Create a shallow copy of the provided {@link List}.
+     *
+     * <p>
+     * Returns a new {@link ArrayList} containing the same element references in the
+     * same order. This is a shallow copy; elements themselves are not cloned. The
+     * returned list is modifiable and independent of the source list.
+     * </p>
+     *
+     * @param <T>  the list element type
+     * @param list the source list to copy; must not be {@code null}
+     * @return a new {@link ArrayList} containing the same elements in the same
+     *         order
+     * @throws NullPointerException if {@code list} is {@code null}
+     */
+    public static <T> List<T> copy(List<T> list) {
+        var copy = new ArrayList<T>();
+        for (int i = 0; i < list.size(); i++) {
+            copy.add(list.get(i));
+        }
+        return copy;
+    }
+
+    /**
+     * Swap two elements in an {@code int} array in-place.
+     *
+     * <p>
+     * Exchanges the elements at the specified indices; this method mutates the
+     * provided array.
+     * </p>
+     *
+     * @param arr    the array containing the elements to swap; must not be
+     *               {@code null}
+     * @param indexA 0-based index of the first element to swap
+     * @param indexB 0-based index of the second element to swap
+     * @throws NullPointerException           if {@code arr} is {@code null}
+     * @throws ArrayIndexOutOfBoundsException if either index is out of range
+     */
+    public static void swap(int[] arr, int indexA, int indexB) {
+        int temp = arr[indexA];
+        arr[indexA] = arr[indexB];
+        arr[indexB] = temp;
+    }
+
+    /**
+     * Swap two elements in a {@link java.util.List} in-place.
+     *
+     * <p>
+     * Exchanges the elements at the specified indices; this method mutates the
+     * provided list. The operation is type-safe and preserves the list's element
+     * type {@code T}. The method is not thread-safe and external synchronization is
+     * required when accessing the list concurrently.
+     * </p>
+     *
+     * @param <T>    the element type of the list
+     * @param list   the list containing the elements to swap; must not be
+     *               {@code null}
+     * @param indexA 0-based index of the first element to swap
+     * @param indexB 0-based index of the second element to swap
+     * @throws NullPointerException      if {@code list} is {@code null}
+     * @throws IndexOutOfBoundsException if either index is out of range
+     */
+    public static <T> void swap(List<T> list, int indexA, int indexB) {
+        list.set(indexA, list.set(indexB, list.get(indexA)));
+    }
+
+    /**
+     * Measure the elapsed wall-clock time required to execute a {@link Runnable}.
+     *
+     * <p>
+     * Executes the supplied {@code Runnable} synchronously and returns the elapsed
+     * time in nanoseconds using {@link System#nanoTime()}.
+     * </p>
+     *
+     * @param runnable the task to execute; may be {@code null}
+     * @return elapsed time in nanoseconds, or {@code 0} if {@code runnable} is
+     *         {@code null}
+     * @implNote Any exception thrown by the supplied {@code Runnable} is propagated
+     *           to the caller.
+     */
+    public static long time(Runnable runnable) {
+        if (runnable == null) {
+            return 0;
+        }
+        long startTime = System.nanoTime();
+        runnable.run();
+        return System.nanoTime() - startTime;
+    }
+
+    /**
+     * Convert a duration in nanoseconds to milliseconds.
+     *
+     * @param nanos the duration in nanoseconds
+     * @return the duration in milliseconds as a {@code double}
+     */
+    public static double nanosToMillis(long nanos) { return nanos / 1000000.0; }
+
+    /**
+     * Convert a duration in nanoseconds (as a double) to milliseconds.
+     *
+     * @param nanos the duration in nanoseconds
+     * @return the duration in milliseconds as a {@code double}
+     */
+    public static double nanosToMillis(double nanos) { return nanos / 1000000.0; }
+
+    /**
+     * Convert nanoseconds to milliseconds and round to two decimal places.
+     *
+     * @param nanos the duration in nanoseconds
+     * @return the rounded duration in milliseconds as a {@code double}
+     */
+    public static double roundedNanosToMillis(long nanos) { return roundTwoDecimals(nanos / 1000000.0); }
+
+    /**
+     * Convert nanoseconds (as a double) to milliseconds and round to two decimal
+     * places.
+     *
+     * @param nanos the duration in nanoseconds
+     * @return the rounded duration in milliseconds as a {@code double}
+     */
+    public static double roundedNanosToMillis(double nanos) { return roundTwoDecimals(nanos / 1000000.0); }
+
+    /**
+     * Return the arithmetic average of the provided {@code Number} values.
+     *
+     *
+     * @param list values to average; may be {@code null} or empty. Ignores
+     *             {@code null} elements.
+     * @return the arithmetic average as a {@code Number}, or {@code 0} when the
+     *         list is {@code null} or empty
+     */
+    public static Number avg(List<? extends Number> list) {
+        if (list == null || list.isEmpty()) {
+            return 0;
+        }
+        double sum = 0.0;
+        int count = 0;
+        for (Number num : list) {
+            if (num != null) {
+                sum += num.doubleValue();
+                count++;
+            }
+        }
+        if (count == 0) {
+            return 0;
+        }
+        return sum / count;
+    }
+
+    /**
+     * Return the arithmetic average of the provided {@code Double} values.
+     *
+     * @param list values to average; may be {@code null} or empty. Ignores
+     *             {@code null} elements.
+     * @return the arithmetic average as a {@code double}, or {@code 0} when the
+     *         list is {@code null} or empty
+     */
+    public static double avgDouble(List<Double> list) {
+        if (list == null || list.isEmpty()) {
+            return 0;
+        }
+        double sum = 0.0;
+        int count = 0;
+        for (Double num : list) {
+            if (num != null) {
+                sum += num;
+                count++;
+            }
+        }
+        if (count == 0) {
+            return 0;
+        }
+        return sum / count;
+    }
+
+    /**
+     * Return the arithmetic average of the provided {@code Float} values.
+     *
+     * @param list values to average; may be {@code null} or empty. Ignores
+     *             {@code null} elements.
+     * @return the arithmetic average as a {@code double}, or {@code 0} when the
+     *         list is {@code null} or empty
+     */
+    public static double avgFloat(List<Float> list) {
+        if (list == null || list.isEmpty()) {
+            return 0;
+        }
+        double sum = 0.0;
+        int count = 0;
+        for (Float num : list) {
+            if (num != null) {
+                sum += num;
+                count++;
+            }
+        }
+        if (count == 0) {
+            return 0;
+        }
+        return sum / count;
+    }
+
+    /**
+     * Return the rounded average of the provided {@code Long} values.
+     *
+     * @param list values to average; may be {@code null} or empty. Ignores
+     *             {@code null} elements.
+     * @return the rounded {@code long} average, or {@code 0} when the list is
+     *         {@code null} or empty
+     */
+    public static long avgLong(List<Long> list) {
+        if (list == null || list.isEmpty()) {
+            return 0;
+        }
+        double sum = 0.0;
+        int count = 0;
+        for (Long num : list) {
+            if (num != null) {
+                sum += num;
+                count++;
+            }
+        }
+        if (count == 0) {
+            return 0;
+        }
+        return Math.round(sum / count);
+    }
+
+    /**
+     * Return the rounded average of the provided {@code Integer} values.
+     *
+     * @param list values to average; may be {@code null} or empty. Ignores
+     *             {@code null} elements.
+     * @return the rounded {@code int} average, or {@code 0} when the list is
+     *         {@code null} or empty
+     */
+    public static int avgInt(List<Integer> list) {
+        if (list == null || list.isEmpty()) {
+            return 0;
+        }
+        double sum = 0.0;
+        int count = 0;
+        for (Integer num : list) {
+            if (num != null) {
+                sum += num;
+                count++;
+            }
+        }
+        if (count == 0) {
+            return 0;
+        }
+        return (int) Math.round(sum / count);
+    }
+
+    /**
+     * Return the rounded average of the provided {@code Short} values.
+     *
+     * @param list values to average; may be {@code null} or empty. Ignores
+     *             {@code null} elements.
+     * @return the rounded {@code short} average, or {@code 0} when the list is
+     *         {@code null} or empty
+     */
+    public static short avgShort(List<Short> list) {
+        if (list == null || list.isEmpty()) {
+            return 0;
+        }
+        double sum = 0.0;
+        int count = 0;
+        for (Short num : list) {
+            if (num != null) {
+                sum += num;
+                count++;
+            }
+        }
+        if (count == 0) {
+            return 0;
+        }
+        return (short) Math.round(sum / count);
+    }
+
+    /**
+     * Return the rounded average of the provided {@code Byte} values.
+     *
+     * @param list values to average; may be {@code null} or empty. Ignores
+     *             {@code null} elements.
+     * @return the rounded {@code byte} average, or {@code 0} when the list is
+     *         {@code null} or empty
+     */
+    public static byte avgByte(List<Byte> list) {
+        if (list == null || list.isEmpty()) {
+            return 0;
+        }
+        double sum = 0.0;
+        int count = 0;
+        for (Byte num : list) {
+            if (num != null) {
+                sum += num;
+                count++;
+            }
+        }
+        if (count == 0) {
+            return 0;
+        }
+        return (byte) Math.round(sum / count);
+    }
 
     /**
      * Round a number to two decimal places.
@@ -70,8 +649,10 @@ public final class Utils {
     }
 
     /**
-     * Fast check whether a string contains a valid double representation. This
-     * helper assumes callers have already checked for {@code null}.
+     * Fast check whether a string contains a valid double representation.
+     * <p>
+     * This helper assumes callers have already checked for {@code null}.
+     * </p>
      *
      * @param in the input string to test (must be non-null)
      * @return {@code true} if {@code in} parses as a double, {@code false}
