@@ -1038,15 +1038,11 @@ public final class Utils {
     }
 
     /**
-     * Create a shallow copy of the given array.
+     * Create a shallow copy of a short array.
      *
-     * <p>
-     * Returns a new array containing the same {@code short} values as the original.
-     * </p>
-     *
-     * @param arr the source array to copy; must not be {@code null}
-     * @return a new array containing the same elements in the same order
-     * @throws NullPointerException if {@code arr} is {@code null}
+     * @param arr source array; must not be null
+     * @return new array with same elements
+     * @throws NullPointerException if arr is null
      */
     public static short[] copy(short[] arr) {
         short[] copy = new short[arr.length];
@@ -1055,15 +1051,11 @@ public final class Utils {
     }
 
     /**
-     * Create a shallow copy of the given array.
+     * Create a shallow copy of a byte array.
      *
-     * <p>
-     * Returns a new array containing the same {@code byte} values as the original.
-     * </p>
-     *
-     * @param arr the source array to copy; must not be {@code null}
-     * @return a new array containing the same elements in the same order
-     * @throws NullPointerException if {@code arr} is {@code null}
+     * @param arr source array; must not be null
+     * @return new array with same elements
+     * @throws NullPointerException if arr is null
      */
     public static byte[] copy(byte[] arr) {
         byte[] copy = new byte[arr.length];
@@ -1072,16 +1064,11 @@ public final class Utils {
     }
 
     /**
-     * Create a shallow copy of the given array.
+     * Create a shallow copy of a double array.
      *
-     * <p>
-     * Returns a new array containing the same {@code double} values as the
-     * original.
-     * </p>
-     *
-     * @param arr the source array to copy; must not be {@code null}
-     * @return a new array containing the same elements in the same order
-     * @throws NullPointerException if {@code arr} is {@code null}
+     * @param arr source array; must not be null
+     * @return new array with same elements
+     * @throws NullPointerException if arr is null
      */
     public static double[] copy(double[] arr) {
         double[] copy = new double[arr.length];
@@ -1090,15 +1077,11 @@ public final class Utils {
     }
 
     /**
-     * Create a shallow copy of the given array.
+     * Create a shallow copy of a float array.
      *
-     * <p>
-     * Returns a new array containing the same {@code float} values as the original.
-     * </p>
-     *
-     * @param arr the source array to copy; must not be {@code null}
-     * @return a new array containing the same elements in the same order
-     * @throws NullPointerException if {@code arr} is {@code null}
+     * @param arr source array; must not be null
+     * @return new array with same elements
+     * @throws NullPointerException if arr is null
      */
     public static float[] copy(float[] arr) {
         float[] copy = new float[arr.length];
@@ -1107,19 +1090,12 @@ public final class Utils {
     }
 
     /**
-     * Create a shallow copy of the provided {@link List}.
+     * Create a shallow copy of a list as a new modifiable {@link ArrayList}.
      *
-     * <p>
-     * Returns a new {@link ArrayList} containing the same element references in the
-     * same order. This is a shallow copy; elements themselves are not cloned. The
-     * returned list is modifiable and independent of the source list.
-     * </p>
-     *
-     * @param <T>  the list element type
-     * @param list the source list to copy; must not be {@code null}
-     * @return a new {@link ArrayList} containing the same elements in the same
-     *         order
-     * @throws NullPointerException if {@code list} is {@code null}
+     * @param <T>  element type
+     * @param list source list; must not be null
+     * @return new ArrayList with same elements
+     * @throws NullPointerException if list is null
      */
     public static <T> List<T> copy(List<T> list) {
         var copy = new ArrayList<T>();
@@ -1130,19 +1106,12 @@ public final class Utils {
     }
 
     /**
-     * Swap two elements in an {@code double} array in-place.
+     * Swap two elements in a double array in-place.
      *
-     * <p>
-     * Exchanges the elements at the specified indices; this method mutates the
-     * provided array.
-     * </p>
-     *
-     * @param arr    the array containing the elements to swap; must not be
-     *               {@code null}
-     * @param indexA 0-based index of the first element to swap
-     * @param indexB 0-based index of the second element to swap
-     * @throws NullPointerException           if {@code arr} is {@code null}
-     * @throws ArrayIndexOutOfBoundsException if either index is out of range
+     * @param arr    array; must not be null
+     * @param indexA first index
+     * @param indexB second index
+     * @throws NullPointerException or ArrayIndexOutOfBoundsException on error
      */
     public static void swap(double[] arr, int indexA, int indexB) {
         double temp = arr[indexA];
@@ -1151,19 +1120,12 @@ public final class Utils {
     }
 
     /**
-     * Swap two elements in an {@code float} array in-place.
+     * Swap two elements in a float array in-place.
      *
-     * <p>
-     * Exchanges the elements at the specified indices; this method mutates the
-     * provided array.
-     * </p>
-     *
-     * @param arr    the array containing the elements to swap; must not be
-     *               {@code null}
-     * @param indexA 0-based index of the first element to swap
-     * @param indexB 0-based index of the second element to swap
-     * @throws NullPointerException           if {@code arr} is {@code null}
-     * @throws ArrayIndexOutOfBoundsException if either index is out of range
+     * @param arr    array; must not be null
+     * @param indexA first index
+     * @param indexB second index
+     * @throws NullPointerException or ArrayIndexOutOfBoundsException on error
      */
     public static void swap(float[] arr, int indexA, int indexB) {
         float temp = arr[indexA];
@@ -1172,19 +1134,12 @@ public final class Utils {
     }
 
     /**
-     * Swap two elements in an {@code long} array in-place.
+     * Swap two elements in a long array in-place.
      *
-     * <p>
-     * Exchanges the elements at the specified indices; this method mutates the
-     * provided array.
-     * </p>
-     *
-     * @param arr    the array containing the elements to swap; must not be
-     *               {@code null}
-     * @param indexA 0-based index of the first element to swap
-     * @param indexB 0-based index of the second element to swap
-     * @throws NullPointerException           if {@code arr} is {@code null}
-     * @throws ArrayIndexOutOfBoundsException if either index is out of range
+     * @param arr    array; must not be null
+     * @param indexA first index
+     * @param indexB second index
+     * @throws NullPointerException or ArrayIndexOutOfBoundsException on error
      */
     public static void swap(long[] arr, int indexA, int indexB) {
         long temp = arr[indexA];
@@ -1193,19 +1148,12 @@ public final class Utils {
     }
 
     /**
-     * Swap two elements in an {@code int} array in-place.
+     * Swap two elements in an int array in-place.
      *
-     * <p>
-     * Exchanges the elements at the specified indices; this method mutates the
-     * provided array.
-     * </p>
-     *
-     * @param arr    the array containing the elements to swap; must not be
-     *               {@code null}
-     * @param indexA 0-based index of the first element to swap
-     * @param indexB 0-based index of the second element to swap
-     * @throws NullPointerException           if {@code arr} is {@code null}
-     * @throws ArrayIndexOutOfBoundsException if either index is out of range
+     * @param arr    array; must not be null
+     * @param indexA first index
+     * @param indexB second index
+     * @throws NullPointerException or ArrayIndexOutOfBoundsException on error
      */
     public static void swap(int[] arr, int indexA, int indexB) {
         int temp = arr[indexA];
@@ -1214,19 +1162,12 @@ public final class Utils {
     }
 
     /**
-     * Swap two elements in an {@code short} array in-place.
+     * Swap two elements in a short array in-place.
      *
-     * <p>
-     * Exchanges the elements at the specified indices; this method mutates the
-     * provided array.
-     * </p>
-     *
-     * @param arr    the array containing the elements to swap; must not be
-     *               {@code null}
-     * @param indexA 0-based index of the first element to swap
-     * @param indexB 0-based index of the second element to swap
-     * @throws NullPointerException           if {@code arr} is {@code null}
-     * @throws ArrayIndexOutOfBoundsException if either index is out of range
+     * @param arr    array; must not be null
+     * @param indexA first index
+     * @param indexB second index
+     * @throws NullPointerException or ArrayIndexOutOfBoundsException on error
      */
     public static void swap(short[] arr, int indexA, int indexB) {
         short temp = arr[indexA];
@@ -1235,19 +1176,12 @@ public final class Utils {
     }
 
     /**
-     * Swap two elements in an {@code byte} array in-place.
+     * Swap two elements in a byte array in-place.
      *
-     * <p>
-     * Exchanges the elements at the specified indices; this method mutates the
-     * provided array.
-     * </p>
-     *
-     * @param arr    the array containing the elements to swap; must not be
-     *               {@code null}
-     * @param indexA 0-based index of the first element to swap
-     * @param indexB 0-based index of the second element to swap
-     * @throws NullPointerException           if {@code arr} is {@code null}
-     * @throws ArrayIndexOutOfBoundsException if either index is out of range
+     * @param arr    array; must not be null
+     * @param indexA first index
+     * @param indexB second index
+     * @throws NullPointerException or ArrayIndexOutOfBoundsException on error
      */
     public static void swap(byte[] arr, int indexA, int indexB) {
         byte temp = arr[indexA];
@@ -1256,19 +1190,13 @@ public final class Utils {
     }
 
     /**
-     * Swap two elements in a {@code T} array in-place.
+     * Swap two elements in a generic array in-place.
      *
-     * <p>
-     * Exchanges the elements at the specified indices; this method mutates the
-     * provided array.
-     * </p>
-     *
-     * @param arr    the array containing the elements to swap; must not be
-     *               {@code null}
-     * @param indexA 0-based index of the first element to swap
-     * @param indexB 0-based index of the second element to swap
-     * @throws NullPointerException           if {@code arr} is {@code null}
-     * @throws ArrayIndexOutOfBoundsException if either index is out of range
+     * @param <T>    element type
+     * @param arr    array; must not be null
+     * @param indexA first index
+     * @param indexB second index
+     * @throws NullPointerException or ArrayIndexOutOfBoundsException on error
      */
     public static <T> void swap(T[] arr, int indexA, int indexB) {
         T temp = arr[indexA];
@@ -1277,40 +1205,24 @@ public final class Utils {
     }
 
     /**
-     * Swap two elements in a {@link java.util.List} in-place.
+     * Swap two elements in a list in-place. Not thread-safe.
      *
-     * <p>
-     * Exchanges the elements at the specified indices; this method mutates the
-     * provided list. The operation is type-safe and preserves the list's element
-     * type {@code T}. The method is not thread-safe and external synchronization is
-     * required when accessing the list concurrently.
-     * </p>
-     *
-     * @param <T>    the element type of the list
-     * @param list   the list containing the elements to swap; must not be
-     *               {@code null}
-     * @param indexA 0-based index of the first element to swap
-     * @param indexB 0-based index of the second element to swap
-     * @throws NullPointerException      if {@code list} is {@code null}
-     * @throws IndexOutOfBoundsException if either index is out of range
+     * @param <T>    element type
+     * @param list   list; must not be null
+     * @param indexA first index
+     * @param indexB second index
+     * @throws NullPointerException or IndexOutOfBoundsException on error
      */
     public static <T> void swap(List<T> list, int indexA, int indexB) {
         list.set(indexA, list.set(indexB, list.get(indexA)));
     }
 
     /**
-     * Measure the elapsed wall-clock time required to execute a {@link Runnable}.
+     * Measure the elapsed wall-clock time (in nanoseconds) to execute a
+     * {@link Runnable}.
      *
-     * <p>
-     * Executes the supplied {@code Runnable} synchronously and returns the elapsed
-     * time in nanoseconds using {@link System#nanoTime()}.
-     * </p>
-     *
-     * @param runnable the task to execute; may be {@code null}
-     * @return elapsed time in nanoseconds, or {@code 0} if {@code runnable} is
-     *         {@code null}
-     * @implNote Any exception thrown by the supplied {@code Runnable} is propagated
-     *           to the caller.
+     * @param runnable task to execute; may be null
+     * @return elapsed nanoseconds, or 0 if runnable is null
      */
     public static long time(Runnable runnable) {
         if (runnable == null) {
@@ -1322,13 +1234,12 @@ public final class Utils {
     }
 
     /**
-     * Measure the elapsed wall-clock time to execute a {@link Supplier} and return
-     * both the elapsed time (in nanoseconds) and the result.
+     * Measure the elapsed time (in nanoseconds) to execute a {@link Supplier} and
+     * return both elapsed time and result as an Object[] {nanos, result}.
      *
      * @param <T>      result type
-     * @param supplier the task to execute; may be {@code null}
-     * @return Object[] containing {nanos, result}, or {0, null} if supplier is null
-     * @implNote Any exception thrown by the supplier is propagated to the caller.
+     * @param supplier task to execute; may be null
+     * @return {nanos, result} or {0, null} if supplier is null
      */
     public static <T> Object[] timeAndGetResult(Supplier<T> supplier) {
         if (supplier == null) {
@@ -1340,46 +1251,42 @@ public final class Utils {
     }
 
     /**
-     * Convert a duration in nanoseconds to milliseconds.
+     * Convert nanoseconds to milliseconds.
      *
-     * @param nanos the duration in nanoseconds
-     * @return the duration in milliseconds as a {@code long}
+     * @param nanos duration in nanoseconds
+     * @return duration in milliseconds
      */
-    public static long nanosToMillis(long nanos) { return nanos / 1000000; }
+    public static double nanosToMillis(long nanos) { return nanos / 1000000.0; }
 
     /**
-     * Convert a duration in nanoseconds (as a double) to milliseconds.
+     * Convert nanoseconds (double) to milliseconds.
      *
-     * @param nanos the duration in nanoseconds
-     * @return the duration in milliseconds as a {@code double}
+     * @param nanos duration in nanoseconds
+     * @return duration in milliseconds
      */
     public static double nanosToMillis(double nanos) { return nanos / 1000000.0; }
 
     /**
-     * Convert nanoseconds to milliseconds and round to two decimal places.
+     * Convert nanoseconds to milliseconds rounded to two decimal places.
      *
-     * @param nanos the duration in nanoseconds
-     * @return the rounded duration in milliseconds as a {@code double}
+     * @param nanos duration in nanoseconds
+     * @return rounded duration in milliseconds
      */
     public static double roundedNanosToMillis(long nanos) { return roundTwoDecimals(nanos / 1000000.0); }
 
     /**
-     * Convert nanoseconds (as a double) to milliseconds and round to two decimal
-     * places.
+     * Convert nanoseconds (double) to milliseconds rounded to two decimal places.
      *
-     * @param nanos the duration in nanoseconds
-     * @return the rounded duration in milliseconds as a {@code double}
+     * @param nanos duration in nanoseconds
+     * @return rounded duration in milliseconds
      */
     public static double roundedNanosToMillis(double nanos) { return roundTwoDecimals(nanos / 1000000.0); }
 
     /**
-     * Return the arithmetic average of the provided {@code Number} values.
+     * Return the arithmetic average of Number values in a list.
      *
-     *
-     * @param list values to average; may be {@code null} or empty. Ignores
-     *             {@code null} elements.
-     * @return the arithmetic average as a {@code Number}, or {@code 0} when the
-     *         list is {@code null} or empty
+     * @param list list to average; may be null or empty
+     * @return average as a Number, or 0 if list is empty
      */
     public static Number avg(List<? extends Number> list) {
         if (list == null || list.isEmpty()) {
@@ -1400,12 +1307,10 @@ public final class Utils {
     }
 
     /**
-     * Return the arithmetic average of the provided {@code Double} values.
+     * Return the arithmetic average of Double values in a list.
      *
-     * @param list values to average; may be {@code null} or empty. Ignores
-     *             {@code null} elements.
-     * @return the arithmetic average as a {@code double}, or {@code 0} when the
-     *         list is {@code null} or empty
+     * @param list list to average; may be null or empty
+     * @return average as a double, or 0 if list is empty
      */
     public static double avgDouble(List<Double> list) {
         if (list == null || list.isEmpty()) {
@@ -1426,12 +1331,10 @@ public final class Utils {
     }
 
     /**
-     * Return the arithmetic average of the provided {@code Float} values.
+     * Return the arithmetic average of Float values in a list.
      *
-     * @param list values to average; may be {@code null} or empty. Ignores
-     *             {@code null} elements.
-     * @return the arithmetic average as a {@code double}, or {@code 0} when the
-     *         list is {@code null} or empty
+     * @param list list to average; may be null or empty
+     * @return average as a double, or 0 if list is empty
      */
     public static double avgFloat(List<Float> list) {
         if (list == null || list.isEmpty()) {
@@ -1452,12 +1355,10 @@ public final class Utils {
     }
 
     /**
-     * Return the rounded average of the provided {@code Long} values.
+     * Return the rounded arithmetic average of Long values in a list.
      *
-     * @param list values to average; may be {@code null} or empty. Ignores
-     *             {@code null} elements.
-     * @return the rounded {@code long} average, or {@code 0} when the list is
-     *         {@code null} or empty
+     * @param list list to average; may be null or empty
+     * @return rounded average as a long, or 0 if list is empty
      */
     public static long avgLong(List<Long> list) {
         if (list == null || list.isEmpty()) {
@@ -1478,12 +1379,10 @@ public final class Utils {
     }
 
     /**
-     * Return the rounded average of the provided {@code Integer} values.
+     * Return the rounded arithmetic average of Integer values in a list.
      *
-     * @param list values to average; may be {@code null} or empty. Ignores
-     *             {@code null} elements.
-     * @return the rounded {@code int} average, or {@code 0} when the list is
-     *         {@code null} or empty
+     * @param list list to average; may be null or empty
+     * @return rounded average as an int, or 0 if list is empty
      */
     public static int avgInt(List<Integer> list) {
         if (list == null || list.isEmpty()) {
@@ -1504,12 +1403,10 @@ public final class Utils {
     }
 
     /**
-     * Return the rounded average of the provided {@code Short} values.
+     * Return the rounded arithmetic average of Short values in a list.
      *
-     * @param list values to average; may be {@code null} or empty. Ignores
-     *             {@code null} elements.
-     * @return the rounded {@code short} average, or {@code 0} when the list is
-     *         {@code null} or empty
+     * @param list list to average; may be null or empty
+     * @return rounded average as a short, or 0 if list is empty
      */
     public static short avgShort(List<Short> list) {
         if (list == null || list.isEmpty()) {
@@ -1530,12 +1427,10 @@ public final class Utils {
     }
 
     /**
-     * Return the rounded average of the provided {@code Byte} values.
+     * Return the rounded arithmetic average of Byte values in a list.
      *
-     * @param list values to average; may be {@code null} or empty. Ignores
-     *             {@code null} elements.
-     * @return the rounded {@code byte} average, or {@code 0} when the list is
-     *         {@code null} or empty
+     * @param list list to average; may be null or empty
+     * @return rounded average as a byte, or 0 if list is empty
      */
     public static byte avgByte(List<Byte> list) {
         if (list == null || list.isEmpty()) {
@@ -1559,25 +1454,23 @@ public final class Utils {
      * Round a number to two decimal places.
      *
      * @param num number to round
-     * @return the number rounded to two decimal places
+     * @return rounded number
      */
     public static double roundTwoDecimals(double num) { return Math.round(num * 100.0) / 100.0; }
 
     /**
-     * Returns {@code true} if the given string can be parsed as an {@link Integer}.
+     * Test whether a string can be parsed as an Integer.
      *
-     * @param in the string to test; may be {@code null}
-     * @return {@code true} if {@code in} represents a valid integer, {@code false}
-     *         otherwise
+     * @param in string to test; may be null
+     * @return true if in is a valid integer, false otherwise
      */
     public static boolean isInt(String in) { return in != null && isIntFast(in); }
 
     /**
-     * Returns {@code true} if the given string can be parsed as a {@link Double}.
+     * Test whether a string can be parsed as a Double.
      *
-     * @param in the string to test; may be {@code null}
-     * @return {@code true} if {@code in} represents a valid double, {@code false}
-     *         otherwise
+     * @param in string to test; may be null
+     * @return true if in is a valid double, false otherwise
      */
     public static boolean isDouble(String in) { return in != null && isDoubleFast(in); }
 
@@ -1599,14 +1492,11 @@ public final class Utils {
     }
 
     /**
-     * Fast check whether a string contains a valid double representation.
-     * <p>
-     * This helper assumes callers have already checked for {@code null}.
-     * </p>
+     * Quick test whether a non-null string contains a valid double representation.
+     * Assumes callers have already checked for null.
      *
-     * @param in the input string to test (must be non-null)
-     * @return {@code true} if {@code in} parses as a double, {@code false}
-     *         otherwise
+     * @param in non-null input string to test
+     * @return true if in parses as a double, false otherwise
      */
     private static boolean isDoubleFast(String in) {
         try {
@@ -1618,11 +1508,10 @@ public final class Utils {
     }
 
     /**
-     * Returns {@code true} if the input is non-empty and is not a number (neither
-     * {@link #isInt(String)} nor {@link #isDouble(String)}).
+     * Test whether a string is non-empty and not numeric.
      *
-     * @param in the string to test; may be {@code null}
-     * @return {@code true} when {@code in} is non-null, non-empty, and not numeric
+     * @param in string to test; may be null
+     * @return true if in is non-null, non-empty, and neither an integer nor double
      */
     public static boolean isNotNum(String in) {
         return in != null && !in.isEmpty() && !isIntFast(in) && !isDoubleFast(in);
@@ -1637,13 +1526,12 @@ public final class Utils {
     private static String validateNonNullString(String in) { return in == null ? "" : in; }
 
     /**
-     * Prompt the user with {@code inputMessage} until a valid double is entered.
+     * Prompt user repeatedly until a valid double is entered.
      *
-     * @param input        the {@link Scanner} to read user input from
-     * @param inputMessage the prompt message printed to standard output; may be
-     *                     {@code null}
-     * @return the parsed {@code double} entered by the user
-     * @throws IllegalArgumentException if {@code input} is {@code null}
+     * @param input        Scanner to read from; must not be null
+     * @param inputMessage prompt message; may be null
+     * @return parsed double entered by user
+     * @throws IllegalArgumentException if input is null
      */
     public static double takeUserDoubleInput(Scanner input, String inputMessage) throws IllegalArgumentException {
         if (input == null) {
@@ -1659,13 +1547,12 @@ public final class Utils {
     }
 
     /**
-     * Prompt the user with {@code inputMessage} until a valid integer is entered.
+     * Prompt user repeatedly until a valid integer is entered.
      *
-     * @param input        the {@link Scanner} to read user input from
-     * @param inputMessage the prompt message printed to standard output; may be
-     *                     {@code null}
-     * @return the parsed {@code int} entered by the user
-     * @throws IllegalArgumentException if {@code input} is {@code null}
+     * @param input        Scanner to read from; must not be null
+     * @param inputMessage prompt message; may be null
+     * @return parsed int entered by user
+     * @throws IllegalArgumentException if input is null
      */
     public static int takeUserIntInput(Scanner input, String inputMessage) throws IllegalArgumentException {
         if (input == null) {
@@ -1681,14 +1568,12 @@ public final class Utils {
     }
 
     /**
-     * Prompt the user with {@code inputMessage} until a non-numeric string is
-     * entered.
+     * Prompt user repeatedly until a non-numeric string is entered.
      *
-     * @param input        the {@link Scanner} to read user input from
-     * @param inputMessage the prompt message printed to standard output; may be
-     *                     {@code null}
-     * @return the validated non-numeric string entered by the user
-     * @throws IllegalArgumentException if {@code input} is {@code null}
+     * @param input        Scanner to read from; must not be null
+     * @param inputMessage prompt message; may be null
+     * @return non-numeric string entered by user
+     * @throws IllegalArgumentException if input is null
      */
     public static String takeUserStringInput(Scanner input, String inputMessage) throws IllegalArgumentException {
         if (input == null) {
