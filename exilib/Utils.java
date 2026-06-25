@@ -104,15 +104,11 @@ public final class Utils {
     }
 
     /**
-     * Sort a generic array using merge sort.
-     * <p>
-     * Sorts the array in-place using an optimized bottom-up merge sort with O(n log
-     * n) time complexity. Uses insertion sort for small runs and ping-pong
-     * buffering to reduce intermediate copies. Null arrays are ignored.
-     * </p>
+     * Sort a generic array in-place using optimized merge sort (O(n log n)). Uses
+     * insertion sort for small runs and ping-pong buffering for efficiency.
      *
-     * @param <T> the element type; must implement {@link Comparable}
-     * @param arr the array to sort; may be {@code null}
+     * @param <T> element type implementing {@link Comparable}
+     * @param arr array to sort; may be {@code null}
      */
     @SuppressWarnings("unchecked")
     public static <T extends Comparable<T>> void mergeSort(T[] arr) {
@@ -154,14 +150,10 @@ public final class Utils {
     }
 
     /**
-     * Sort a double array using insertion sort.
-     * <p>
-     * Sorts the array in-place using insertion sort, which has O(n^2) time
-     * complexity but is efficient for small or nearly sorted arrays. Null arrays
-     * are ignored.
-     * </p>
+     * Sort a double array in-place using insertion sort (O(n²)). Efficient for
+     * small/nearly-sorted arrays.
      *
-     * @param arr the array to sort; may be {@code null}
+     * @param arr array to sort; may be {@code null}
      */
     public static void insertionSort(double[] arr) {
         if (arr == null || arr.length <= 1) {
@@ -178,13 +170,9 @@ public final class Utils {
     }
 
     /**
-     * Sort a double array using selection sort.
-     * <p>
-     * Sorts the array in-place using selection sort, which has O(n^2) time
-     * complexity. Null arrays are ignored.
-     * </p>
+     * Sort a double array in-place using selection sort (O(n²)).
      *
-     * @param arr the array to sort; may be {@code null}
+     * @param arr array to sort; may be {@code null}
      */
     public static void selectionSort(double[] arr) {
         if (arr == null || arr.length <= 1) {
@@ -239,14 +227,10 @@ public final class Utils {
     }
 
     /**
-     * Sort a double array using merge sort.
-     * <p>
-     * Sorts the array in-place using an optimized bottom-up merge sort with O(n log
-     * n) time complexity. Uses insertion sort for small runs and ping-pong
-     * buffering to reduce intermediate copies. Null arrays are ignored.
-     * </p>
+     * Sort a double array in-place using optimized merge sort (O(n log n)). Uses
+     * insertion sort for small runs and ping-pong buffering for efficiency.
      *
-     * @param arr the array to sort; may be {@code null}
+     * @param arr array to sort; may be {@code null}
      */
     public static void mergeSort(double[] arr) {
         if (arr == null || arr.length <= 1) {
@@ -287,14 +271,10 @@ public final class Utils {
     }
 
     /**
-     * Sort a float array using insertion sort.
-     * <p>
-     * Sorts the array in-place using insertion sort, which has O(n^2) time
-     * complexity but is efficient for small or nearly sorted arrays. Null arrays
-     * are ignored.
-     * </p>
+     * Sort a float array in-place using insertion sort (O(n²)). Efficient for
+     * small/nearly-sorted arrays.
      *
-     * @param arr the array to sort; may be {@code null}
+     * @param arr array to sort; may be {@code null}
      */
     public static void insertionSort(float[] arr) {
         if (arr == null || arr.length <= 1) {
@@ -311,13 +291,9 @@ public final class Utils {
     }
 
     /**
-     * Sort a float array using selection sort.
-     * <p>
-     * Sorts the array in-place using selection sort, which has O(n^2) time
-     * complexity. Null arrays are ignored.
-     * </p>
+     * Sort a float array in-place using selection sort (O(n²)).
      *
-     * @param arr the array to sort; may be {@code null}
+     * @param arr array to sort; may be {@code null}
      */
     public static void selectionSort(float[] arr) {
         if (arr == null || arr.length <= 1) {
@@ -372,14 +348,10 @@ public final class Utils {
     }
 
     /**
-     * Sort a float array using merge sort.
-     * <p>
-     * Sorts the array in-place using an optimized bottom-up merge sort with O(n log
-     * n) time complexity. Uses insertion sort for small runs and ping-pong
-     * buffering to reduce intermediate copies. Null arrays are ignored.
-     * </p>
+     * Sort a float array in-place using optimized merge sort (O(n log n)). Uses
+     * insertion sort for small runs and ping-pong buffering for efficiency.
      *
-     * @param arr the array to sort; may be {@code null}
+     * @param arr array to sort; may be {@code null}
      */
     public static void mergeSort(float[] arr) {
         if (arr == null || arr.length <= 1) {
@@ -420,14 +392,10 @@ public final class Utils {
     }
 
     /**
-     * Sort a long array using insertion sort.
-     * <p>
-     * Sorts the array in-place using insertion sort, which has O(n^2) time
-     * complexity but is efficient for small or nearly sorted arrays. Null arrays
-     * are ignored.
-     * </p>
+     * Sort a long array in-place using insertion sort (O(n²)). Efficient for
+     * small/nearly-sorted arrays.
      *
-     * @param arr the array to sort; may be {@code null}
+     * @param arr array to sort; may be {@code null}
      */
     public static void insertionSort(long[] arr) {
         if (arr == null || arr.length <= 1) {
@@ -444,13 +412,9 @@ public final class Utils {
     }
 
     /**
-     * Sort a long array using selection sort.
-     * <p>
-     * Sorts the array in-place using selection sort, which has O(n^2) time
-     * complexity. Null arrays are ignored.
-     * </p>
+     * Sort a long array in-place using selection sort (O(n²)).
      *
-     * @param arr the array to sort; may be {@code null}
+     * @param arr array to sort; may be {@code null}
      */
     public static void selectionSort(long[] arr) {
         if (arr == null || arr.length <= 1) {
@@ -505,14 +469,10 @@ public final class Utils {
     }
 
     /**
-     * Sort a long array using merge sort.
-     * <p>
-     * Sorts the array in-place using an optimized bottom-up merge sort with O(n log
-     * n) time complexity. Uses insertion sort for small runs and ping-pong
-     * buffering to reduce intermediate copies. Null arrays are ignored.
-     * </p>
+     * Sort a long array in-place using optimized merge sort (O(n log n)). Uses
+     * insertion sort for small runs and ping-pong buffering for efficiency.
      *
-     * @param arr the array to sort; may be {@code null}
+     * @param arr array to sort; may be {@code null}
      */
     public static void mergeSort(long[] arr) {
         if (arr == null || arr.length <= 1) {
@@ -553,14 +513,10 @@ public final class Utils {
     }
 
     /**
-     * Sort an int array using insertion sort.
-     * <p>
-     * Sorts the array in-place using insertion sort, which has O(n^2) time
-     * complexity but is efficient for small or nearly sorted arrays. Null arrays
-     * are ignored.
-     * </p>
+     * Sort an int array in-place using insertion sort (O(n²)). Efficient for
+     * small/nearly-sorted arrays.
      *
-     * @param arr the array to sort; may be {@code null}
+     * @param arr array to sort; may be {@code null}
      */
     public static void insertionSort(int[] arr) {
         if (arr == null || arr.length <= 1) {
@@ -577,13 +533,9 @@ public final class Utils {
     }
 
     /**
-     * Sort an int array using selection sort.
-     * <p>
-     * Sorts the array in-place using selection sort, which has O(n^2) time
-     * complexity. Null arrays are ignored.
-     * </p>
+     * Sort an int array in-place using selection sort (O(n²)).
      *
-     * @param arr the array to sort; may be {@code null}
+     * @param arr array to sort; may be {@code null}
      */
     public static void selectionSort(int[] arr) {
         if (arr == null || arr.length <= 1) {
@@ -638,14 +590,10 @@ public final class Utils {
     }
 
     /**
-     * Sort an int array using merge sort.
-     * <p>
-     * Sorts the array in-place using an optimized bottom-up merge sort with O(n log
-     * n) time complexity. Uses insertion sort for small runs and ping-pong
-     * buffering to reduce intermediate copies. Null arrays are ignored.
-     * </p>
+     * Sort an int array in-place using optimized merge sort (O(n log n)). Uses
+     * insertion sort for small runs and ping-pong buffering for efficiency.
      *
-     * @param arr the array to sort; may be {@code null}
+     * @param arr array to sort; may be {@code null}
      */
     public static void mergeSort(int[] arr) {
         if (arr == null || arr.length <= 1) {
@@ -686,14 +634,10 @@ public final class Utils {
     }
 
     /**
-     * Sort a short array using insertion sort.
-     * <p>
-     * Sorts the array in-place using insertion sort, which has O(n^2) time
-     * complexity but is efficient for small or nearly sorted arrays. Null arrays
-     * are ignored.
-     * </p>
+     * Sort a short array in-place using insertion sort (O(n²)). Efficient for
+     * small/nearly-sorted arrays.
      *
-     * @param arr the array to sort; may be {@code null}
+     * @param arr array to sort; may be {@code null}
      */
     public static void insertionSort(short[] arr) {
         if (arr == null || arr.length <= 1) {
@@ -710,13 +654,9 @@ public final class Utils {
     }
 
     /**
-     * Sort a short array using selection sort.
-     * <p>
-     * Sorts the array in-place using selection sort, which has O(n^2) time
-     * complexity. Null arrays are ignored.
-     * </p>
+     * Sort a short array in-place using selection sort (O(n²)).
      *
-     * @param arr the array to sort; may be {@code null}
+     * @param arr array to sort; may be {@code null}
      */
     public static void selectionSort(short[] arr) {
         if (arr == null || arr.length <= 1) {
