@@ -26,15 +26,10 @@ public final class Utils {
     }
 
     /**
-     * Sort a generic array using insertion sort.
-     * <p>
-     * Sorts the array in-place using insertion sort, which has O(n^2) time
-     * complexity but is efficient for small or nearly sorted arrays. Null arrays
-     * are ignored.
-     * </p>
+     * Sort a generic array in-place using insertion sort (O(n^2)).
      *
-     * @param <T> the element type; must implement {@link Comparable}
-     * @param arr the array to sort; may be {@code null}
+     * @param <T> element type implementing {@link Comparable}
+     * @param arr array to sort; may be {@code null}
      */
     public static <T extends Comparable<T>> void insertionSort(T[] arr) {
         if (arr == null || arr.length <= 1) {
@@ -51,14 +46,10 @@ public final class Utils {
     }
 
     /**
-     * Sort a generic array using selection sort.
-     * <p>
-     * Sorts the array in-place using selection sort, which has O(n^2) time
-     * complexity. Null arrays are ignored.
-     * </p>
+     * Sort a generic array in-place using selection sort (O(n²)).
      *
-     * @param <T> the element type; must implement {@link Comparable}
-     * @param arr the array to sort; may be {@code null}
+     * @param <T> element type implementing {@link Comparable}
+     * @param arr array to sort; may be {@code null}
      */
     public static <T extends Comparable<T>> void selectionSort(T[] arr) {
         if (arr == null || arr.length <= 1) {
