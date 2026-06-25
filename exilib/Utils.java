@@ -711,14 +711,10 @@ public final class Utils {
     }
 
     /**
-     * Sort a short array using merge sort.
-     * <p>
-     * Sorts the array in-place using an optimized bottom-up merge sort with O(n log
-     * n) time complexity. Uses insertion sort for small runs and ping-pong
-     * buffering to reduce intermediate copies. Null arrays are ignored.
-     * </p>
+     * Sort a short array in-place using optimized merge sort (O(n log n)). Uses
+     * insertion sort for small runs and ping-pong buffering for efficiency.
      *
-     * @param arr the array to sort; may be {@code null}
+     * @param arr array to sort; may be {@code null}
      */
     public static void mergeSort(short[] arr) {
         if (arr == null || arr.length <= 1) {
@@ -759,14 +755,10 @@ public final class Utils {
     }
 
     /**
-     * Sort a byte array using insertion sort.
-     * <p>
-     * Sorts the array in-place using insertion sort, which has O(n^2) time
-     * complexity but is efficient for small or nearly sorted arrays. Null arrays
-     * are ignored.
-     * </p>
+     * Sort a byte array in-place using insertion sort (O(n²)). Efficient for
+     * small/nearly-sorted arrays.
      *
-     * @param arr the array to sort; may be {@code null}
+     * @param arr array to sort; may be {@code null}
      */
     public static void insertionSort(byte[] arr) {
         if (arr == null || arr.length <= 1) {
@@ -783,13 +775,9 @@ public final class Utils {
     }
 
     /**
-     * Sort a byte array using selection sort.
-     * <p>
-     * Sorts the array in-place using selection sort, which has O(n^2) time
-     * complexity. Null arrays are ignored.
-     * </p>
+     * Sort a byte array in-place using selection sort (O(n²)).
      *
-     * @param arr the array to sort; may be {@code null}
+     * @param arr array to sort; may be {@code null}
      */
     public static void selectionSort(byte[] arr) {
         if (arr == null || arr.length <= 1) {
@@ -844,14 +832,10 @@ public final class Utils {
     }
 
     /**
-     * Sort a byte array using merge sort.
-     * <p>
-     * Sorts the array in-place using an optimized bottom-up merge sort with O(n log
-     * n) time complexity. Uses insertion sort for small runs and ping-pong
-     * buffering to reduce intermediate copies. Null arrays are ignored.
-     * </p>
+     * Sort a byte array in-place using optimized merge sort (O(n log n)). Uses
+     * insertion sort for small runs and ping-pong buffering for efficiency.
      *
-     * @param arr the array to sort; may be {@code null}
+     * @param arr array to sort; may be {@code null}
      */
     public static void mergeSort(byte[] arr) {
         if (arr == null || arr.length <= 1) {
@@ -892,86 +876,75 @@ public final class Utils {
     }
 
     /**
-     * Convert months to years and round to two decimal places.
+     * Convert months to years, rounded to two decimal places.
      *
      * @param months number of months
-     * @return equivalent years rounded to two decimal places
+     * @return equivalent years
      */
     public static double toYears(int months) { return Math.round(months / 12.0 * 100.0) / 100.0; }
 
     /**
-     * Print an object array to standard output using
-     * {@link Arrays#toString(Object[])}.
+     * Print an object array to standard output.
      *
-     * @param arr the array to print; may be {@code null}
+     * @param arr array to print; may be {@code null}
      */
     public static void print(Object[] arr) { System.out.println(Arrays.toString(arr)); }
 
     /**
-     * Print a float array to standard output using
-     * {@link Arrays#toString(float[])}.
+     * Print a float array to standard output.
      *
-     * @param arr the array to print; may be {@code null}
+     * @param arr array to print; may be null
      */
     public static void print(float[] arr) { System.out.println(Arrays.toString(arr)); }
 
     /**
-     * Print a double array to standard output using
-     * {@link Arrays#toString(double[])}.
+     * Print a double array to standard output.
      *
-     * @param arr the array to print; may be {@code null}
+     * @param arr array to print; may be null
      */
     public static void print(double[] arr) { System.out.println(Arrays.toString(arr)); }
 
     /**
-     * Print a long array to standard output using {@link Arrays#toString(long[])}.
+     * Print a long array to standard output.
      *
-     * @param arr the array to print; may be {@code null}
+     * @param arr array to print; may be null
      */
     public static void print(long[] arr) { System.out.println(Arrays.toString(arr)); }
 
     /**
-     * Print an int array to standard output using {@link Arrays#toString(int[])}.
+     * Print an int array to standard output.
      *
-     * @param arr the array to print; may be {@code null}
+     * @param arr array to print; may be null
      */
     public static void print(int[] arr) { System.out.println(Arrays.toString(arr)); }
 
     /**
-     * Print a short array to standard output using
-     * {@link Arrays#toString(short[])}.
+     * Print a short array to standard output.
      *
-     * @param arr the array to print; may be {@code null}
+     * @param arr array to print; may be null
      */
     public static void print(short[] arr) { System.out.println(Arrays.toString(arr)); }
 
     /**
-     * Print a byte array to standard output using {@link Arrays#toString(byte[])}.
+     * Print a byte array to standard output.
      *
-     * @param arr the array to print; may be {@code null}
+     * @param arr array to print; may be null
      */
     public static void print(byte[] arr) { System.out.println(Arrays.toString(arr)); }
 
     /**
-     * Print a {@link List} to standard output using {@link #listStr(List)}.
+     * Print a list to standard output.
      *
-     * @param list the list to print; may be {@code null}
+     * @param list list to print; may be null
      */
     public static void print(List<?> list) { System.out.println(listStr(list)); }
 
     /**
-     * Return a compact string representation of the provided {@link List}.
+     * Return a compact string representation of a list (e.g., {@code [a, b, c]}).
+     * Returns {@code "null"} if list is null, {@code "[]"} if empty.
      *
-     * <p>
-     * The representation uses each element's {@code toString()} value and follows
-     * the conventional list format (for example: {@code [a, b, c]}). Special cases
-     * are handled explicitly: when {@code list} is {@code null} this method returns
-     * the literal string {@code "null"}; when the list is empty this method returns
-     * {@code "[]"}.
-     * </p>
-     *
-     * @param list the list to convert to a string; may be {@code null}
-     * @return a non-null string representation of the list
+     * @param list list to convert; may be {@code null}
+     * @return non-null string representation
      */
     public static String listStr(List<?> list) {
         if (list == null) {
@@ -991,19 +964,10 @@ public final class Utils {
     }
 
     /**
-     * Fill the given integer array with pseudorandom values in the range
-     * {@code [0, arr.length)}.
+     * Fill an int array in-place with pseudorandom values in {@code [0, length)}.
      *
-     * <p>
-     * This method mutates the provided array in-place. It uses a shared
-     * {@link Random} instance and calls {@link Random#nextInt(int,int)} for each
-     * slot.
-     * </p>
-     *
-     * @param arr the array to fill; must not be {@code null}
-     * @throws NullPointerException if {@code arr} is {@code null}
-     * @implNote If {@code arr.length == 0} the method returns immediately and no
-     *           random values are generated.
+     * @param arr array to fill; must not be {@code null}
+     * @throws NullPointerException if arr is null
      */
     public static void fillRandomArray(int[] arr) {
         final int n = arr.length << 1;
@@ -1013,22 +977,12 @@ public final class Utils {
     }
 
     /**
-     * Create and return a new {@code int} array of the given length filled with
-     * pseudorandom values in the range {@code [0, length)}.
+     * Create and return a new int array of the given length filled with
+     * pseudorandom values in {@code [0, length)}.
      *
-     * <p>
-     * The returned array is newly allocated and populated using the shared
-     * {@link Random} instance. Each element is produced by
-     * {@link Random#nextInt(int,int)} with origin {@code 0} and bound equal to the
-     * array length.
-     * </p>
-     *
-     * @param length the length of the array to create; must be non-negative
-     * @return a newly allocated array of length {@code length} containing
-     *         pseudorandom values in {@code [0, length)}
-     * @throws NegativeArraySizeException if {@code length} is negative
-     * @implNote If {@code length == 0} an empty array is returned and no random
-     *           values are generated.
+     * @param length array length (non-negative)
+     * @return newly allocated random array
+     * @throws NegativeArraySizeException if length is negative
      */
     public static int[] newRandomArray(int length) {
         var arr = new int[length];
@@ -1040,19 +994,12 @@ public final class Utils {
     }
 
     /**
-     * Create a shallow copy of the given array.
+     * Create a shallow copy of a generic array.
      *
-     * <p>
-     * Returns a new array containing the same element references as the original.
-     * The copy is a shallow copy; elements themselves are not cloned.
-     * </p>
-     *
-     * @param <T> the array element type
-     * @param arr the source array to copy; must not be {@code null}
-     * @return a new array containing the same elements in the same order
-     * @throws NullPointerException if {@code arr} is {@code null}
-     * @implNote The implementation performs an unchecked cast by converting an
-     *           {@code Object[]} to {@code T[]}.
+     * @param <T> element type
+     * @param arr source array to copy; must not be null
+     * @return new array with same elements
+     * @throws NullPointerException if arr is null
      */
     @SuppressWarnings("unchecked")
     public static <T> T[] copy(T[] arr) {
@@ -1065,15 +1012,11 @@ public final class Utils {
     }
 
     /**
-     * Create a shallow copy of the given array.
+     * Create a shallow copy of a long array.
      *
-     * <p>
-     * Returns a new array containing the same {@code long} values as the original.
-     * </p>
-     *
-     * @param arr the source array to copy; must not be {@code null}
-     * @return a new array containing the same elements in the same order
-     * @throws NullPointerException if {@code arr} is {@code null}
+     * @param arr source array; must not be null
+     * @return new array with same elements
+     * @throws NullPointerException if arr is null
      */
     public static long[] copy(long[] arr) {
         long[] copy = new long[arr.length];
@@ -1082,15 +1025,11 @@ public final class Utils {
     }
 
     /**
-     * Create a shallow copy of the given array.
+     * Create a shallow copy of an int array.
      *
-     * <p>
-     * Returns a new array containing the same {@code int} values as the original.
-     * </p>
-     *
-     * @param arr the source array to copy; must not be {@code null}
-     * @return a new array containing the same elements in the same order
-     * @throws NullPointerException if {@code arr} is {@code null}
+     * @param arr source array; must not be null
+     * @return new array with same elements
+     * @throws NullPointerException if arr is null
      */
     public static int[] copy(int[] arr) {
         int[] copy = new int[arr.length];
