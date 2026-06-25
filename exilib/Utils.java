@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.function.Supplier;
 
 /**
  * Utility helpers for commonly used operations.
@@ -1448,6 +1449,24 @@ public final class Utils {
         long startTime = System.nanoTime();
         runnable.run();
         return System.nanoTime() - startTime;
+    }
+
+    /**
+     * Measure the elapsed wall-clock time to execute a {@link Supplier} and return
+     * both the elapsed time (in nanoseconds) and the result.
+     *
+     * @param <T>      result type
+     * @param supplier the task to execute; may be {@code null}
+     * @return Object[] containing {nanos, result}, or {0, null} if supplier is null
+     * @implNote Any exception thrown by the supplier is propagated to the caller.
+     */
+    public static <T> Object[] timeAndGetResult(Supplier<T> supplier) {
+        if (supplier == null) {
+            return new Object[] {0, null};
+        }
+        long startTime = System.nanoTime();
+        T result = supplier.get();
+        return new Object[] {System.nanoTime() - startTime, result};
     }
 
     /**
