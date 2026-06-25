@@ -1473,9 +1473,9 @@ public final class Utils {
      * Convert a duration in nanoseconds to milliseconds.
      *
      * @param nanos the duration in nanoseconds
-     * @return the duration in milliseconds as a {@code double}
+     * @return the duration in milliseconds as a {@code long}
      */
-    public static double nanosToMillis(long nanos) { return nanos / 1000000.0; }
+    public static long nanosToMillis(long nanos) { return nanos / 1000000; }
 
     /**
      * Convert a duration in nanoseconds (as a double) to milliseconds.
