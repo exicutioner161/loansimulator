@@ -13,7 +13,7 @@ import java.util.Set;
  * unsubsidized portions and supports semester disbursements.
  */
 public class StudentLoanSimulator extends LoanSimulator {
-    // TODO: SIMULATION IS STILL NOT ALIGNED WITH STUDENTAID LOAN SIMULATOR
+    // SIMULATION IS STILL NOT ALIGNED WITH STUDENTAID LOAN SIMULATOR
     private static final int MONTHS_IN_UNI = 48;
     private static final int POSTGRAD_SUB_GRACE_MONTHS = 6;
     private static final int YEARS_IN_UNI = 4;
